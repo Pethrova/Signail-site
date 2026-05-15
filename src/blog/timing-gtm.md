@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post.njk
 title: Timing Is the Most Underrated GTM Variable
 description: Every outbound framework treats timing as an afterthought. That's the wrong frame. Timing is a signal layer, not a scheduling decision.
 date: 2026-01-20
