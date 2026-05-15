@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post.njk
 title: Traditional Technographic Signals Are Broken. Here's What Replaced Them.
 description: AI agents have abstracted away integration pain. Tool count no longer predicts buying urgency. The entire technographic signal layer needs to be rebuilt around stack velocity, adoption patterns, and migration sequences.
 date: 2026-03-10
