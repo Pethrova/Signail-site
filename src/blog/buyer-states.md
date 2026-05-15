@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: post.njk
 title: The 5 AI-Era Buyer States — And Why 2023 Personas Are Obsolete
 description: AI changed how companies experience and articulate their problems. Here are the 5 states that replaced the persona.
 date: 2026-02-14
