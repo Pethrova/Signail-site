@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if title %}{{ title }} — Signal Resolution{% else %}Signal Resolution — High CAC Is the Symptom. ICP Misalignment Is the Disease.{% endif %}</title>
+<meta name="description" content="{{ description or 'Nine questions that expose exactly where your GTM signal is breaking. Your archetype identified, your primary bottleneck named, your next move clarified. Free. Instant. No account required.' }}">
+
+{# ── Canonical URL (important for SEO / Medium syndication) ── #}
+<link rel="canonical" href="https://signalresolution.com{{ page.url }}">
+
+{# ── Open Graph (LinkedIn sharing previews) ── #}
+<meta property="og:type"        content="{{ ogType or 'website' }}">
+<meta property="og:title"       content="{{ title or 'Signal Resolution' }}">
+<meta property="og:description" content="{{ description or 'GTM diagnostic for B2B SaaS founders.' }}">
+<meta property="og:url"         content="https://signalresolution.com{{ page.url }}">
+{% if ogImage %}
+<meta property="og:image" content="https://signalresolution.com{{ ogImage }}">
+{% endif %}
+
+{# ── Twitter/X card ── #}
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="{{ title or 'Signal Resolution' }}">
+<meta name="twitter:description" content="{{ description or 'GTM diagnostic for B2B SaaS founders.' }}">
+
+{# ── Fonts ── #}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+{# ── Global CSS ── #}
+<link rel="stylesheet" href="/assets/css/global.css">
+
+{# ── Page-specific extra CSS (optional) ── #}
+{% if extraCss %}<link rel="stylesheet" href="{{ extraCss }}">{% endif %}
+
+{# ── Schema.org structured data for blog posts ── #}
+{% if layout == "post" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ title }}",
+  "datePublished": "{{ date | htmlDate }}",
+  "description": "{{ description }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Signal Resolution",
+    "url": "https://signalresolution.com"
+  }
+}
+</script>
+{% endif %}
+</head>
+<body>
+
+{# ── Custom cursor ── #}
+<div id="cur"></div>
+<div id="curR"></div>
+
+{# ── Nav (pulled from _includes/nav.njk) ── #}
+{% include "nav.njk" %}
+
+{# ── Page content ── #}
+<main>
+  {{ content | safe }}
+</main>
+
+{# ── Footer (pulled from _includes/footer.njk) ── #}
+{% include "footer.njk" %}
+
+{# ── Global JS ── #}
+<script src="/assets/js/main.js"></script>
+
+</body>
+</html>

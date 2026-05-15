@@ -1,0 +1,43 @@
+---
+layout: base
+ogType: article
+---
+
+<article class="post-article">
+
+  {# ── Article header ── #}
+  <header class="post-header inner">
+    <div class="post-meta-top">
+      <a href="/blog/" class="back-link">← All Writing</a>
+      <span class="post-cat">{{ category }}</span>
+    </div>
+    <h1 class="post-hl">{{ title }}</h1>
+    {% if description %}
+    <p class="post-deck">{{ description }}</p>
+    {% endif %}
+    <div class="post-byline">
+      <time datetime="{{ date | htmlDate }}">{{ date | postDate }}</time>
+      <span class="post-dot">·</span>
+      <span>{{ content | readingTime }}</span>
+    </div>
+  </header>
+
+  {# ── Article body (your Markdown renders here) ── #}
+  <div class="post-body inner prose">
+    {{ content | safe }}
+  </div>
+
+  {# ── Article footer: CTA back to diagnostic ── #}
+  <footer class="post-footer inner">
+    <div class="post-cta-block">
+      <div class="post-cta-label">Before you run another GTM motion —</div>
+      <h3 class="post-cta-hl">NAME YOUR PRIMARY BOTTLENECK.</h3>
+      <p class="post-cta-body">Nine questions. Four minutes. Your GTM score, your archetype, and the one constraint breaking your pipeline — identified specifically.</p>
+      <a href="/assessment.html" class="btn"><span>Run the Diagnostic — Free →</span></a>
+    </div>
+
+    {# ── Back to blog ── #}
+    <a href="/blog/" class="back-link" style="margin-top: 48px; display:inline-block;">← Back to all writing</a>
+  </footer>
+
+</article>

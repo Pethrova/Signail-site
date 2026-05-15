@@ -1,0 +1,51 @@
+---
+layout: base
+title: Writing
+description: GTM intelligence, ICP methodology, and signal theory for B2B SaaS founders.
+permalink: /blog/
+---
+
+<section class="blog-index">
+  <div class="inner">
+
+    <div class="blog-hd">
+      <p class="eyebrow">Writing</p>
+      <h1 class="sec-hl">THINKING.<br><em>OUT LOUD.</em></h1>
+      <p class="blog-intro">GTM intelligence, ICP methodology, and signal theory. No frameworks for their own sake — only what increases clarity or resolves a constraint.</p>
+    </div>
+
+    {# ── Featured post (first/featured) ── #}
+    {% set featuredPost = collections.featured[0] %}
+    {% if featuredPost %}
+    <div class="blog-featured">
+      <a href="{{ featuredPost.url }}" class="post feat">
+        <div class="ptag"><span class="ptag-dot"></span>Featured · {{ featuredPost.data.category }}</div>
+        <div class="ptitle">{{ featuredPost.data.title }}</div>
+        <div class="pexcerpt">{{ featuredPost.data.description }}</div>
+        <div class="pmeta">
+          <span>{{ featuredPost.date | postDate }} · {{ featuredPost.content | readingTime }}</span>
+          <span class="pread">Read →</span>
+        </div>
+      </a>
+    </div>
+    {% endif %}
+
+    {# ── All posts grid ── #}
+    <div class="posts blog-grid">
+      {% for post in collections.posts %}
+        {% if not post.data.featured %}
+        <a href="{{ post.url }}" class="post rv">
+          <div class="ptag"><span class="ptag-dot"></span>{{ post.data.category }}</div>
+          <div class="ptitle">{{ post.data.title }}</div>
+          <div class="pexcerpt">{{ post.data.description }}</div>
+          <div class="pmeta">
+            <span>{{ post.date | postDate }} · {{ post.content | readingTime }}</span>
+            <span class="pread">Read →</span>
+          </div>
+        </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>

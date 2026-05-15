@@ -1,0 +1,74 @@
+# Sveltia CMS Configuration
+# This file defines what fields appear in the CMS editor when you write a post.
+# Visit signalresolution.com/admin to use the interface.
+
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/signal-resolution   # ← Replace with your actual repo
+  branch: main
+
+# Where uploaded images get stored
+media_folder: src/assets/images
+public_folder: /assets/images
+
+collections:
+  - name: "posts"
+    label: "Blog Posts"
+    folder: "src/blog"
+    create: true
+    slug: "{{slug}}"              # filename = URL slug
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        hint: "Full post title. Aim for signal + specificity over cleverness."
+
+      - label: "Description / Excerpt"
+        name: "description"
+        widget: "text"
+        hint: "1–2 sentences. Shows on post cards, og:description, and Medium syndication teaser."
+
+      - label: "Publish Date"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "MMMM D, YYYY"
+        time_format: false
+
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - "ICP Methodology"
+          - "Psychographics"
+          - "Signal Theory"
+          - "GTM Strategy"
+          - "Offer Architecture"
+          - "Revenue Operations"
+          - "Diagnostic Insights"
+        hint: "Matches your Content Brain category taxonomy."
+
+      - label: "Featured Post?"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        hint: "Featured post shows large at the top of the blog index."
+
+      - label: "Permalink / URL Slug"
+        name: "permalink"
+        widget: "string"
+        hint: "e.g. /blog/icp-resolution-framework/ — use hyphens, no spaces."
+        required: false
+
+      - label: "OG Image"
+        name: "ogImage"
+        widget: "image"
+        required: false
+        hint: "Social sharing image. 1200×630px. Optional."
+
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        hint: "Write in Markdown. Use ## for H2, ### for H3. Use **bold** for key terms."
