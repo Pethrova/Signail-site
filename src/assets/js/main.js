@@ -29,7 +29,7 @@ document.querySelectorAll('a,button,.layer,.bs,.d-card,.bc,.blog-sm,.tc,.tenet,.
 });
 
 window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('stuck',scrollY>48);
+  document.getElementById('mainnav').classList.toggle('stuck',scrollY>48);
 });
 
 const ro=new IntersectionObserver(es=>
