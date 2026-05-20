@@ -193,7 +193,10 @@ function submitFinal(){
 
   document.getElementById('fSuccess').classList.add('on');
 
-  const scoreCard = document.querySelector('.score-card');
+}
+
+/* ── SCORE CARD BAR ANIMATION ── */
+const scoreCard = document.querySelector('.score-card');
 let barsRan = false;
 
 if (scoreCard) {
@@ -213,5 +216,4 @@ if (scoreCard) {
   }, { threshold: .4 });
 
   so.observe(scoreCard);
-}
 }
