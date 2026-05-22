@@ -1,51 +1,112 @@
 ---
-layout: base
+layout: base.njk
 title: Writing
 description: GTM intelligence, ICP methodology, and signal theory for B2B SaaS founders.
 permalink: /blog/
 ---
 
-<section class="blog-index">
-  <div class="inner">
+{% set featuredPost = collections.featured[0] or collections.posts[0] %}
 
-    <div class="blog-hd">
-      <p class="eyebrow">Writing</p>
-      <h1 class="sec-hl">THINKING.<br><em>OUT LOUD.</em></h1>
-      <p class="blog-intro">GTM intelligence, ICP methodology, and signal theory. No frameworks for their own sake — only what increases clarity or resolves a constraint.</p>
+<section class="page-header">
+  <div class="ph-inner inner">
+    <p class="ph-ew">Writing</p>
+    <h1 class="ph-hl">GTM intelligence and signal thinking for B2B SaaS.</h1>
+    <p class="ph-sub">Read practical essays on ICP clarity, buyer-state dynamics, and evidence-led GTM decisions.</p>
+  </div>
+</section>
+
+<section class="filter-bar">
+  <div class="fb-inner inner">
+    <div class="fb-label">Filter by category</div>
+    <div class="fb-actions">
+      <button class="filter-btn is-active" data-filter="all" onclick="filter('all', this)">All</button>
+      <button class="filter-btn" data-filter="ICP" onclick="filter('ICP', this)">ICP</button>
+      <button class="filter-btn" data-filter="Positioning" onclick="filter('Positioning', this)">Positioning</button>
+      <button class="filter-btn" data-filter="GTM" onclick="filter('GTM', this)">GTM</button>
     </div>
+    <div class="search-wrap">
+      <input id="blogSearch" class="search-input" type="search" placeholder="Search posts" oninput="search(this.value)">
+      <span class="search-icon">⌕</span>
+    </div>
+  </div>
+</section>
 
-    {# ── Featured post (first/featured) ── #}
-    {% set featuredPost = collections.featured[0] %}
+<section class="blog-main">
+  <div class="bm-inner inner">
     {% if featuredPost %}
-    <div class="blog-featured">
-      <a href="{{ featuredPost.url }}" class="post feat">
-        <div class="ptag"><span class="ptag-dot"></span>Featured · {{ featuredPost.data.category }}</div>
-        <div class="ptitle">{{ featuredPost.data.title }}</div>
-        <div class="pexcerpt">{{ featuredPost.data.description }}</div>
-        <div class="pmeta">
-          <span>{{ featuredPost.date | postDate }} · {{ featuredPost.content | readingTime }}</span>
-          <span class="pread">Read →</span>
-        </div>
+    <div class="featured-post" data-category="{{ featuredPost.data.category or 'GTM' }}">
+      <a class="fp-card" href="{{ featuredPost.url }}">
+        <div class="fp-badge">Featured</div>
+        <h2 class="fp-title">{{ featuredPost.data.title }}</h2>
+        <p class="fp-excerpt">{{ featuredPost.data.description }}</p>
+        <div class="fp-meta">{{ featuredPost.date | postDate }} · {{ featuredPost.content | readingTime }}</div>
       </a>
+      <div class="fp-side">
+        <div class="fp-side-card">
+          <strong>Want a custom diagnosis?</strong>
+          <p>Run the 9-question assessment and identify your primary GTM bottleneck.</p>
+          <a href="/assessment/">Run assessment →</a>
+        </div>
+      </div>
     </div>
     {% endif %}
 
-    {# ── All posts grid ── #}
-    <div class="posts blog-grid">
+    <div class="post-grid" id="postGrid">
+      {% set count = 0 %}
       {% for post in collections.posts %}
         {% if not post.data.featured %}
-        <a href="{{ post.url }}" class="post rv">
-          <div class="ptag"><span class="ptag-dot"></span>{{ post.data.category }}</div>
-          <div class="ptitle">{{ post.data.title }}</div>
-          <div class="pexcerpt">{{ post.data.description }}</div>
-          <div class="pmeta">
-            <span>{{ post.date | postDate }} · {{ post.content | readingTime }}</span>
-            <span class="pread">Read →</span>
-          </div>
+        {% set count = count + 1 %}
+        <a href="{{ post.url }}" class="post-card" data-title="{{ post.data.title | lower }}" data-description="{{ (post.data.description or '') | lower }}" data-category="{{ post.data.category or 'GTM' }}">
+          <div class="fp-badge">{{ post.data.category or 'GTM' }}</div>
+          <h3>{{ post.data.title }}</h3>
+          <p>{{ post.data.description }}</p>
+          <div class="fp-meta">{{ post.date | postDate }} · {{ post.content | readingTime }}</div>
         </a>
         {% endif %}
       {% endfor %}
+
+      {% if count < 4 %}
+      <article class="post-card placeholder" data-category="placeholder">
+        <div class="fp-badge">Coming next</div>
+        <h3>How to segment by buyer state</h3>
+        <p>A practical model for changing messaging as intent matures.</p>
+        <div class="fp-meta">Draft preview</div>
+      </article>
+      {% endif %}
+      {% if count < 3 %}
+      <article class="post-card placeholder" data-category="placeholder">
+        <div class="fp-badge">Coming next</div>
+        <h3>Signal quality in outbound systems</h3>
+        <p>Where targeting logic breaks before SDRs ever touch a lead.</p>
+        <div class="fp-meta">Draft preview</div>
+      </article>
+      {% endif %}
     </div>
 
+    <div class="bottom-layout">
+      <div class="bottom-posts">
+        <h3>Continue reading</h3>
+        <ul>
+          {% for post in collections.posts %}
+          <li><a href="{{ post.url }}">{{ post.data.title }}</a></li>
+          {% endfor %}
+          {% if collections.posts | length < 4 %}
+          <li><span>Diagnostic scoring methodology (placeholder)</span></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <aside class="sidebar-cta">
+        <p class="sc-kicker">Free diagnostic</p>
+        <h4 class="sc-title">Name the GTM bottleneck before your next sprint.</h4>
+        <p class="sc-body">Nine questions, four minutes, instant archetype + bottleneck output.</p>
+        <a class="sc-btn" href="/assessment/">Run the assessment</a>
+        <form class="sc-email-form" onsubmit="submitSidebar(event)">
+          <label for="sc-email">Get new essays</label>
+          <input id="sc-email" type="email" placeholder="you@company.com" required>
+          <button type="submit">Notify me</button>
+        </form>
+      </aside>
+    </div>
   </div>
 </section>
