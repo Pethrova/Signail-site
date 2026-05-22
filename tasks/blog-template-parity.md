@@ -4,31 +4,73 @@
 Ensure all blog-facing templates render with equivalent structure, spacing intent, and semantic landmarks so users see a consistent experience between blog index and blog article pages.
 
 ## Source of truth template
-`src/_layouts/blog.njk` is the canonical parity reference. Any blog-related template updates must be reconciled against this file before merge.
+`_reference/blog.html` is the canonical parity reference. Any blog-related template updates must be reconciled against this file before merge.
 
 ## Required class names
 The following class contracts are mandatory wherever their corresponding regions exist:
-- `blog-hero`
-- `blog-title`
-- `blog-meta`
-- `blog-content`
-- `blog-footer`
-- `blog-cta`
+- `page-header`
+- `ph-inner`
+- `ph-ew`
+- `ph-hl`
+- `ph-sub`
+- `filter-bar`
+- `fb-inner`
+- `fb-label`
+- `filter-btn`
+- `search-wrap`
+- `search-input`
+- `search-icon`
+- `blog-main`
+- `bm-inner`
+- `featured-post`
+- `fp-card`
+- `fp-badge`
+- `fp-title`
+- `fp-excerpt`
+- `fp-meta`
+- `fp-side`
+- `fp-side-card`
+- `fsc-tag`
+- `fsc-title`
+- `fsc-excerpt`
+- `fsc-meta`
+- `post-grid`
+- `post-card`
+- `pc-tag`
+- `pc-title`
+- `pc-excerpt`
+- `pc-meta`
+- `bottom-layout`
+- `bottom-posts`
+- `sidebar-cta`
+- `sc-kicker`
+- `sc-title`
+- `sc-body`
+- `sc-btn`
+- `sc-email-form`
 
 ## Forbidden legacy classes
 Do not introduce or retain legacy aliases that diverge from the required class contract:
-- `post-hero`
-- `post-title`
-- `post-meta-row`
-- `post-body`
-- `post-footer-legacy`
+- `blog-index`
+- `blog-hd`
+- `blog-featured`
+- `posts blog-grid`
+- `post feat`
+- `ptag`
+- `ptitle`
+- `pexcerpt`
+- `pmeta`
+- `pread`
+- `eyebrow`
+- `sec-hl`
+- `blog-intro`
 
 ## Validation commands
 Run all checks below before declaring parity-complete:
 - `npm run build`
 - `npm run lint` (if configured)
-- `rg "post-hero|post-title|post-meta-row|post-body|post-footer-legacy" src`
-- `rg "blog-hero|blog-title|blog-meta|blog-content|blog-footer|blog-cta" src`
+- `rg "blog-index|blog-hd|blog-featured|posts blog-grid|post feat|ptag|ptitle|pexcerpt|pmeta|pread|eyebrow|sec-hl|blog-intro" src`
+- `rg "page-header|ph-inner|ph-ew|ph-hl|ph-sub|filter-bar|fb-inner|fb-label|filter-btn|search-wrap|search-input|search-icon|blog-main|bm-inner|featured-post|fp-card|fp-badge|fp-title|fp-excerpt|fp-meta|fp-side|fp-side-card|fsc-tag|fsc-title|fsc-excerpt|fsc-meta|post-grid|post-card|pc-tag|pc-title|pc-excerpt|pc-meta|bottom-layout|bottom-posts|sidebar-cta|sc-kicker|sc-title|sc-body|sc-btn|sc-email-form" src`
 
 ## "Done means" definition
 Parity work is done only when:
