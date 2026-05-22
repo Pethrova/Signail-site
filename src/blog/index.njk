@@ -1,112 +1,130 @@
 ---
 layout: base.njk
 title: Writing
-description: GTM intelligence, ICP methodology, and signal theory for B2B SaaS founders.
+description: Authoritative signal intelligence writing for seed-stage B2B SaaS founders. Frameworks, field-tested theory, and opinionated GTM thinking from Signal Resolution.
 permalink: /blog/
 ---
 
-{% set featuredPost = collections.featured[0] or collections.posts[0] %}
+{% set posts = collections.posts or [] %}
+{% set featuredPost = collections.featured[0] or posts[0] %}
+{% set visiblePosts = [] %}
+{% for post in posts %}
+  {% if not featuredPost or post.url != featuredPost.url %}
+    {% set visiblePosts = visiblePosts.concat([post]) %}
+  {% endif %}
+{% endfor %}
+{% set sidePosts = visiblePosts.slice(0, 2) %}
+{% set gridPosts = visiblePosts.slice(2, 8) %}
+{% set bottomPosts = visiblePosts.slice(8, 10) %}
 
-<section class="page-header">
-  <div class="ph-inner inner">
-    <p class="ph-ew">Writing</p>
-    <h1 class="ph-hl">GTM intelligence and signal thinking for B2B SaaS.</h1>
-    <p class="ph-sub">Read practical essays on ICP clarity, buyer-state dynamics, and evidence-led GTM decisions.</p>
+<div class="page-header">
+  <div class="ph-inner">
+    <div class="ph-ew">Signal Resolution · Writing</div>
+    <h1 class="ph-hl">THINKING.<br>OUT <em>LOUD.</em></h1>
+    <p class="ph-sub">Authoritative frameworks, field-tested signal theory, and the unfiltered GTM thinking that most people aren't willing to publish. No content marketing. Just the ideas.</p>
   </div>
-</section>
+</div>
 
-<section class="filter-bar">
-  <div class="fb-inner inner">
-    <div class="fb-label">Filter by category</div>
-    <div class="fb-actions">
-      <button class="filter-btn is-active" data-filter="all" onclick="filter('all', this)">All</button>
-      <button class="filter-btn" data-filter="ICP" onclick="filter('ICP', this)">ICP</button>
-      <button class="filter-btn" data-filter="Positioning" onclick="filter('Positioning', this)">Positioning</button>
-      <button class="filter-btn" data-filter="GTM" onclick="filter('GTM', this)">GTM</button>
-    </div>
-    <div class="search-wrap">
-      <input id="blogSearch" class="search-input" type="search" placeholder="Search posts" oninput="search(this.value)">
-      <span class="search-icon">⌕</span>
-    </div>
+<div class="filter-bar">
+  <div class="fb-inner">
+    <span class="fb-label">Filter:</span>
+    <button class="filter-btn on" onclick="filter('all',this)">All</button>
+    <button class="filter-btn" onclick="filter('icp-methodology',this)">ICP Methodology</button>
+    <button class="filter-btn" onclick="filter('signal-theory',this)">Signal Theory</button>
+    <button class="filter-btn" onclick="filter('psychographics',this)">Psychographics</button>
+    <button class="filter-btn" onclick="filter('founder-gtm',this)">Founder GTM</button>
+    <button class="filter-btn" onclick="filter('data-layer',this)">Data Layer</button>
+    <div class="search-wrap"><input class="search-input" type="text" placeholder="Search posts..." oninput="search(this.value)"><span class="search-icon">⌕</span></div>
   </div>
-</section>
+</div>
 
-<section class="blog-main">
-  <div class="bm-inner inner">
+<div class="blog-main">
+  <div class="bm-inner">
     {% if featuredPost %}
-    <div class="featured-post" data-category="{{ featuredPost.data.category or 'GTM' }}">
-      <a class="fp-card" href="{{ featuredPost.url }}">
-        <div class="fp-badge">Featured</div>
-        <h2 class="fp-title">{{ featuredPost.data.title }}</h2>
-        <p class="fp-excerpt">{{ featuredPost.data.description }}</p>
-        <div class="fp-meta">{{ featuredPost.date | postDate }} · {{ featuredPost.content | readingTime }}</div>
+    <div class="featured-post rv" id="featuredRow">
+      <a href="{{ featuredPost.url }}" class="fp-card" data-cat="{{ (featuredPost.data.category or 'icp-methodology') | slug }}" data-title="{{ featuredPost.data.title | escape }}">
+        <div class="fp-badge"><span class="fp-badge-dot"></span>Featured · {{ featuredPost.data.category or 'ICP Methodology' }}</div>
+        <div class="fp-title">{{ featuredPost.data.title }}</div>
+        <div class="fp-excerpt">{{ featuredPost.data.description or featuredPost.templateContent | striptags | truncate(260) }}</div>
+        <div class="fp-meta"><span>{{ featuredPost.date | postDate }} · {{ featuredPost.content | readingTime }}</span><span class="fp-read">Read the post →</span></div>
       </a>
       <div class="fp-side">
-        <div class="fp-side-card">
-          <strong>Want a custom diagnosis?</strong>
-          <p>Run the 9-question assessment and identify your primary GTM bottleneck.</p>
-          <a href="/assessment/">Run assessment →</a>
-        </div>
+        {% for post in sidePosts %}
+        <a href="{{ post.url }}" class="fp-side-card" data-cat="{{ (post.data.category or 'signal-theory') | slug }}" data-title="{{ post.data.title | escape }}">
+          <div class="fsc-tag"><span class="fsc-tag-dot"></span>{{ post.data.category or 'Signal Theory' }}</div>
+          <div class="fsc-title">{{ post.data.title }}</div>
+          <div class="fsc-excerpt">{{ post.data.description or post.templateContent | striptags | truncate(190) }}</div>
+          <div class="fsc-meta"><span>{{ post.date | postDate }} · {{ post.content | readingTime }}</span><span class="fsc-read">Read →</span></div>
+        </a>
+        {% endfor %}
+        {% for i in range(sidePosts | length, 2) %}
+        <a href="/assessment/" class="fp-side-card" data-cat="icp-methodology" data-title="Signal Resolution Assessment">
+          <div class="fsc-tag"><span class="fsc-tag-dot"></span>ICP Methodology</div>
+          <div class="fsc-title">Why Your ICP Document Is a Hypothesis, Not a System</div>
+          <div class="fsc-excerpt">Run the assessment to score your signal system and identify your next GTM move.</div>
+          <div class="fsc-meta"><span>Free diagnostic</span><span class="fsc-read">Start →</span></div>
+        </a>
+        {% endfor %}
       </div>
     </div>
     {% endif %}
 
     <div class="post-grid" id="postGrid">
-      {% set count = 0 %}
-      {% for post in collections.posts %}
-        {% if not post.data.featured %}
-        {% set count = count + 1 %}
-        <a href="{{ post.url }}" class="post-card" data-title="{{ post.data.title | lower }}" data-description="{{ (post.data.description or '') | lower }}" data-category="{{ post.data.category or 'GTM' }}">
-          <div class="fp-badge">{{ post.data.category or 'GTM' }}</div>
-          <h3>{{ post.data.title }}</h3>
-          <p>{{ post.data.description }}</p>
-          <div class="fp-meta">{{ post.date | postDate }} · {{ post.content | readingTime }}</div>
-        </a>
-        {% endif %}
+      {% for post in gridPosts %}
+      <a href="{{ post.url }}" class="post-card rv{% if loop.index == 2 %} d1{% elif loop.index == 3 %} d2{% endif %}" data-cat="{{ (post.data.category or 'signal-theory') | slug }}" data-title="{{ post.data.title | escape }}">
+        <div class="pc-tag"><span class="pc-tag-dot"></span>{{ post.data.category or 'Signal Theory' }}</div>
+        <div class="pc-title">{{ post.data.title }}</div>
+        <div class="pc-excerpt">{{ post.data.description or post.templateContent | striptags | truncate(210) }}</div>
+        <div class="pc-meta"><span>{{ post.date | postDate }} · {{ post.content | readingTime }}</span><span class="pc-read">Read →</span></div>
+      </a>
       {% endfor %}
-
-      {% if count < 4 %}
-      <article class="post-card placeholder" data-category="placeholder">
-        <div class="fp-badge">Coming next</div>
-        <h3>How to segment by buyer state</h3>
-        <p>A practical model for changing messaging as intent matures.</p>
-        <div class="fp-meta">Draft preview</div>
-      </article>
-      {% endif %}
-      {% if count < 3 %}
-      <article class="post-card placeholder" data-category="placeholder">
-        <div class="fp-badge">Coming next</div>
-        <h3>Signal quality in outbound systems</h3>
-        <p>Where targeting logic breaks before SDRs ever touch a lead.</p>
-        <div class="fp-meta">Draft preview</div>
-      </article>
-      {% endif %}
+      {% for i in range(gridPosts | length, 6) %}
+      <a href="/assessment/" class="post-card rv{% if loop.index == 2 %} d1{% elif loop.index == 3 %} d2{% endif %}" data-cat="signal-theory" data-title="Signal Resolution GTM Framework Placeholder">
+        <div class="pc-tag"><span class="pc-tag-dot"></span>Signal Theory</div>
+        <div class="pc-title">The GTM Playbook AI Broke — And What Comes Next</div>
+        <div class="pc-excerpt">Explore the assessment for a scored breakdown of your current signal model and bottlenecks.</div>
+        <div class="pc-meta"><span>Framework brief</span><span class="pc-read">Read →</span></div>
+      </a>
+      {% endfor %}
+      <div class="no-results" id="noResults">No posts found. Try a different search or category.</div>
     </div>
 
     <div class="bottom-layout">
       <div class="bottom-posts">
-        <h3>Continue reading</h3>
-        <ul>
-          {% for post in collections.posts %}
-          <li><a href="{{ post.url }}">{{ post.data.title }}</a></li>
-          {% endfor %}
-          {% if collections.posts | length < 4 %}
-          <li><span>Diagnostic scoring methodology (placeholder)</span></li>
-          {% endif %}
-        </ul>
+        {% for post in bottomPosts %}
+        <a href="{{ post.url }}" class="post-card rv{% if loop.index == 2 %} d1{% endif %}" data-cat="{{ (post.data.category or 'icp-methodology') | slug }}" data-title="{{ post.data.title | escape }}">
+          <div class="pc-tag"><span class="pc-tag-dot"></span>{{ post.data.category or 'ICP Methodology' }}</div>
+          <div class="pc-title">{{ post.data.title }}</div>
+          <div class="pc-excerpt">{{ post.data.description or post.templateContent | striptags | truncate(200) }}</div>
+          <div class="pc-meta"><span>{{ post.date | postDate }} · {{ post.content | readingTime }}</span><span class="pc-read">Read →</span></div>
+        </a>
+        {% endfor %}
+        {% for i in range(bottomPosts | length, 2) %}
+        <a href="/assessment/" class="post-card rv{% if loop.index == 2 %} d1{% endif %}" data-cat="icp-methodology" data-title="Pipeline Compounding — Why Signal Accuracy Gets Better the Longer You Run It">
+          <div class="pc-tag"><span class="pc-tag-dot"></span>ICP Methodology</div>
+          <div class="pc-title">Pipeline Compounding — Why Signal Accuracy Gets Better the Longer You Run It</div>
+          <div class="pc-excerpt">A static ICP doesn't improve. A signal system does. Every deal — won or lost — is a data point that refines your model.</div>
+          <div class="pc-meta"><span>Sep 2025 · 7 min</span><span class="pc-read">Read →</span></div>
+        </a>
+        {% endfor %}
       </div>
-
-      <aside class="sidebar-cta">
-        <p class="sc-kicker">Free diagnostic</p>
-        <h4 class="sc-title">Name the GTM bottleneck before your next sprint.</h4>
-        <p class="sc-body">Nine questions, four minutes, instant archetype + bottleneck output.</p>
-        <a class="sc-btn" href="/assessment/">Run the assessment</a>
-        <form class="sc-email-form" onsubmit="submitSidebar(event)">
-          <label for="sc-email">Get new essays</label>
-          <input id="sc-email" type="email" placeholder="you@company.com" required>
-          <button type="submit">Notify me</button>
-        </form>
-      </aside>
+      <div class="rv d2" style="display:flex;flex-direction:column;gap:2px;">
+        <div class="sidebar-cta">
+          <div class="sc-kicker">Free Diagnostic</div>
+          <div class="sc-title">KNOW YOUR SIGNAL SCORE</div>
+          <div class="sc-body">Four minutes. Nine questions. A scored breakdown of your ICP across all four signal layers — plus your buyer state classification.</div>
+          <a href="/assessment/" class="sc-btn">Take the Free Assessment →</a>
+        </div>
+        <div class="sidebar-cta" style="background:var(--s1);">
+          <div class="sc-kicker">Free Ebook</div>
+          <div class="sc-title">THE ICP RESOLUTION METHOD</div>
+          <div class="sc-body">The complete framework for turning social listening into pipeline intelligence. 142 pages + 4 bonuses. Free.</div>
+          <div class="sc-email-form">
+            <input class="sc-input" type="email" placeholder="Your email" id="sidebarEmail">
+            <button class="sc-submit" onclick="submitSidebar(event)">Get the Free Ebook →</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</section>
+</div>
