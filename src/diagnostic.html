@@ -1,1 +1,898 @@
-<!-- diagnostic app -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICP Clarity Diagnostic — Signal Resolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080706;--sf:#0f0e0c;--sf2:#161410;--sf3:#1d1a15;
+  --brd:rgba(255,200,80,0.07);--brdH:rgba(255,200,80,0.18);
+  --gold:#f5a623;--goldH:#ffd166;--goldD:rgba(245,166,35,0.35);
+  --ember:#ff6b35;--slate:#c8c4bb;--muted:#6e6860;--dim:#3a3530;
+  --text:#ede8df;--white:#f7f3ec;
+  --F:'Bebas Neue',sans-serif;
+  --S:'Fraunces',serif;
+  --M:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--S);overflow-x:hidden;min-height:100vh;}
+button{font-family:inherit;cursor:pointer;}
+input,textarea{font-family:var(--M);background:var(--sf2);border:1px solid var(--brd);color:var(--white);padding:12px 14px;width:100%;font-size:12px;letter-spacing:.04em;outline:none;transition:border-color .2s;}
+input::placeholder,textarea::placeholder{color:var(--dim);}
+input:focus,textarea:focus{border-color:rgba(245,166,35,.4);}
+textarea{resize:vertical;min-height:80px;}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");}
+
+/* Animations */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes ringFill{from{stroke-dashoffset:339}to{stroke-dashoffset:var(--offset)}}
+.fade-up{animation:fadeUp .5s ease both;}
+.fade-in{animation:fadeIn .4s ease both;}
+
+/* Screens */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* Shared */
+.gold-bar{height:3px;width:100%;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--gold);}
+.kicker{font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.headline{font-family:var(--F);line-height:.92;letter-spacing:.02em;color:var(--white);margin:0;}
+.body-text{font-family:var(--S);font-style:italic;font-size:15px;color:var(--slate);line-height:1.7;}
+.mono{font-family:var(--M);font-size:11px;color:var(--muted);letter-spacing:.06em;}
+.card{background:var(--bg);border:1px solid var(--brd);position:relative;overflow:hidden;}
+.card.glow{border-color:var(--brdH);}
+
+/* Buttons */
+.btn-fire{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--gold);color:var(--bg);font-family:var(--M);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:16px 32px;border:none;transition:all .25s;}
+.btn-fire:hover{box-shadow:0 0 50px rgba(245,166,35,.4);transform:translateY(-2px);}
+.btn-fire:disabled{background:var(--dim);cursor:not-allowed;box-shadow:none;transform:none;opacity:.5;}
+.btn-fire.full{width:100%;}
+.btn-line{font-family:var(--M);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--brd);padding:12px 24px;transition:all .2s;}
+.btn-line:hover{color:var(--gold);border-color:rgba(245,166,35,.22);}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:rgba(8,7,6,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);}
+.nav-logo{font-family:var(--F);font-size:18px;letter-spacing:.12em;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:10px;}
+.nav-logo .sigil{color:var(--gold);font-size:22px;}
+.nav-right{font-family:var(--M);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);}
+
+/* Orbs / ambient */
+.orb-a{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%);top:-100px;right:-150px;filter:blur(40px);pointer-events:none;}
+.orb-b{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.06),transparent 70%);bottom:-80px;left:-80px;filter:blur(60px);pointer-events:none;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.025) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,black,transparent);pointer-events:none;}
+.shard{position:absolute;top:-20%;right:-10%;width:55%;height:130%;background:linear-gradient(135deg,transparent 40%,rgba(245,166,35,.04) 40%,rgba(245,166,35,.015) 60%,transparent 60%);pointer-events:none;}
+.watermark{position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-family:var(--F);font-size:200px;color:rgba(245,166,35,.03);line-height:1;pointer-events:none;white-space:nowrap;}
+
+/* Progress pips */
+.progress-bar{display:flex;gap:3px;}
+.progress-bar .pip{height:3px;flex:1;background:var(--brd);transition:background .4s;}
+.progress-bar .pip.done{background:var(--gold);}
+.progress-bar .pip.current{background:rgba(245,166,35,.4);}
+
+/* Maturity */
+.mat-0{color:#ff6b35;border-color:#ff6b35 !important;}.mat-0-bg{background:rgba(255,107,53,.1);}
+.mat-1{color:#e8943a;border-color:#e8943a !important;}.mat-1-bg{background:rgba(232,148,58,.1);}
+.mat-2{color:rgba(245,166,35,0.5);border-color:rgba(245,166,35,0.5) !important;}.mat-2-bg{background:rgba(245,166,35,.06);}
+.mat-3{color:#f5a623;border-color:#f5a623 !important;}.mat-3-bg{background:rgba(245,166,35,.08);}
+
+/* Cat bar */
+.cat-bar{height:3px;background:var(--brd);border-radius:1px;overflow:hidden;}
+.cat-bar-fill{height:100%;border-radius:1px;transition:width 1s ease;}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--sf2);border:1px solid var(--brdH);max-width:480px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:fadeUp .3s ease both;}
+.modal-inner{padding:32px;}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:18px;line-height:1;padding:4px;}
+
+/* Responsive */
+@media(max-width:640px){
+  .nav{padding:16px 20px;}
+  .frame-btn{flex-direction:column !important;gap:10px !important;}
+  .score-header{flex-direction:column !important;gap:16px !important;}
+  .split-2{grid-template-columns:1fr !important;}
+  .tier-grid{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><span class="sigil">◆</span> SIGNAL RESOLUTION</a>
+  <span class="nav-right">DIAGNOSTIC ENGINE</span>
+</nav>
+
+<!-- APPLICATION MODAL -->
+<div class="modal-overlay" id="modal-apply">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="gold-bar"></div>
+    <div class="modal-inner">
+      <div class="kicker" id="modal-kicker">Apply for DWY</div>
+      <div style="font-family:var(--F);font-size:28px;letter-spacing:.04em;color:var(--white);margin-bottom:8px;" id="modal-title">Reserve your spot</div>
+      <p class="body-text" style="margin-bottom:24px;font-size:13px;" id="modal-sub">Your diagnostic data is on file. Confirm your details below.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div><div class="kicker" style="margin-bottom:4px;">Company name</div><input id="app-company" type="text" placeholder="Your company"></div>
+        <div><div class="kicker" style="margin-bottom:4px;">Current ARR</div><input id="app-arr" type="text" placeholder="e.g. $1.4M"></div>
+        <div><div class="kicker" style="margin-bottom:4px;">What outcome are you building toward?</div><textarea id="app-goal" placeholder="Describe the specific result you need"></textarea></div>
+        <div><div class="kicker" style="margin-bottom:4px;">How did you find Signal Resolution?</div><input id="app-source" type="text" placeholder="LinkedIn, referral, search..."></div>
+        <button class="btn-fire full" style="margin-top:8px;" onclick="submitApplication()">Submit application →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 1 — LANDING
+══════════════════════════════ -->
+<div id="screen-landing" class="screen active" style="justify-content:center;align-items:center;padding:80px 24px;position:relative;overflow:hidden;">
+  <div class="orb-a"></div><div class="orb-b"></div><div class="grid-bg"></div><div class="shard"></div>
+  <div style="position:relative;z-index:2;max-width:800px;text-align:center;padding:0 24px;width:100%;">
+
+    <!-- Return visitor banner -->
+    <div id="return-banner" style="display:none;background:var(--sf2);border:1px solid var(--brdH);padding:12px 20px;margin-bottom:32px;display:none;align-items:center;justify-content:space-between;gap:12px;max-width:560px;margin-left:auto;margin-right:auto;">
+      <span class="mono" style="font-size:10px;">Welcome back — you previously scored <span id="return-score" style="color:var(--gold);"></span></span>
+      <button class="btn-line" style="padding:8px 16px;white-space:nowrap;" onclick="showResultsDirect()">View your results →</button>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:10px;font-family:var(--M);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:36px;padding:5px 14px;border:1px solid rgba(245,166,35,.2);background:rgba(245,166,35,.04);" class="fade-up">
+      <span style="width:5px;height:5px;background:var(--gold);border-radius:50%;animation:blink 1.8s infinite;"></span>
+      FREE DIAGNOSTIC · 4 MINUTES · INSTANT RESULTS
+    </div>
+
+    <h1 class="headline fade-up" style="font-size:clamp(56px,9vw,120px);animation-delay:.1s;">
+      FIND YOUR<br><span style="color:var(--gold);">SIGNAL</span> <span style="color:var(--dim);">GAPS</span>
+    </h1>
+    <p class="body-text fade-up" style="max-width:520px;margin:28px auto 52px;font-size:clamp(15px,1.6vw,20px);animation-delay:.2s;">
+      Nine questions that expose exactly where your buyer intelligence is missing — your archetype identified, your primary bottleneck named, your next move clarified.
+    </p>
+
+    <div class="kicker fade-up" style="animation-delay:.3s;">CHOOSE YOUR DIAGNOSTIC LENS</div>
+    <div id="frames-container" style="display:flex;flex-direction:column;gap:2px;max-width:560px;margin:12px auto 44px;" class="fade-up"></div>
+
+    <span class="mono fade-up" style="font-size:10px;color:var(--dim);animation-delay:.5s;">No email required · 9 questions · Scored against 7 diagnostic archetypes</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 2 — DIAGNOSTIC GAME
+══════════════════════════════ -->
+<div id="screen-game" class="screen" style="justify-content:center;align-items:center;padding:100px 24px 40px;">
+  <div style="max-width:640px;width:100%;padding:0 24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span class="mono" id="q-counter">Question 1 of 9</span>
+      <span class="mono" id="q-timer">0:00</span>
+    </div>
+    <div class="progress-bar" id="progress-bar"></div>
+    <div style="margin-top:28px;" id="question-card"></div>
+    <div id="feedback-card" style="margin-top:2px;display:none;"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 3 — GATED RESULT PREVIEW
+══════════════════════════════ -->
+<div id="screen-results" class="screen" style="padding:100px 24px 60px;position:relative;overflow:hidden;">
+  <div class="watermark">SIGNAL</div>
+  <div style="max-width:640px;margin:0 auto;position:relative;z-index:2;padding:0 24px;" id="results-content"></div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 4 — EMAIL GATE
+══════════════════════════════ -->
+<div id="screen-lead" class="screen" style="justify-content:center;align-items:center;padding:100px 24px 60px;">
+  <div style="max-width:480px;width:100%;padding:0 24px;" id="lead-content"></div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 5 — FULL REPORT
+══════════════════════════════ -->
+<div id="screen-report" class="screen" style="padding:100px 24px 60px;position:relative;overflow:hidden;">
+  <div class="watermark">REPORT</div>
+  <div style="max-width:640px;margin:0 auto;position:relative;z-index:2;padding:0 24px;" id="report-content"></div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 6 — FULL SYSTEM PAGE
+══════════════════════════════ -->
+<div id="screen-system" class="screen" style="padding:100px 24px 80px;position:relative;overflow:hidden;">
+  <div class="watermark">SYSTEM</div>
+  <div style="max-width:700px;margin:0 auto;position:relative;z-index:2;padding:0 24px;" id="system-content"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+const API_BASE = 'https://data009.app.n8n.cloud/webhook';
+const ENDPOINTS = {
+  startSession: API_BASE + '/diagnostic-session-start',
+  completeSession: API_BASE + '/diagnostic-session-complete',
+  leadCapture: API_BASE + '/diagnostic-lead-capture',
+};
+
+const MATURITY = ['Ad Hoc', 'Emerging', 'Operational', 'Evidence-Led'];
+const MATURITY_COLORS = ['#ff6b35', '#e8943a', 'rgba(245,166,35,0.5)', '#f5a623'];
+
+const FRAMES = [
+  { id: 'entry_frame_icp_clarity', label: 'ICP / POSITIONING CLARITY', desc: 'Your ICP definition, positioning, or message-market fit feels unstable.', icon: '◎' },
+  { id: 'entry_frame_conversion_efficiency', label: 'CONVERSION / REVENUE EFFICIENCY', desc: 'Demand exists but activation, conversion, pricing, or CAC feels inefficient.', icon: '⟐' },
+  { id: 'entry_frame_scale_operator', label: 'SCALE / OPERATOR SYSTEMS', desc: 'The issue feels cross-functional, system-level, or tied to prioritization.', icon: '⬡' },
+];
+
+const CAT_LABELS = {
+  category_icp:'ICP Clarity', category_positioning:'Positioning', category_offer:'Offer Logic',
+  category_activation:'Activation', category_onboarding:'Onboarding', category_conversion:'Conversion',
+  category_funnel:'Funnel Clarity', category_strategy:'Strategic Signal', category_pricing:'Pricing',
+  category_dark_funnel:'Dark Funnel', category_signal_capture:'Signal Capture',
+  category_attribution:'Attribution', category_cac:'CAC Efficiency',
+  category_packaging:'Packaging', category_system_design:'System Design',
+};
+
+const BOTTLENECK_COPY = {
+  bottleneck_icp_clarity: { title: 'ICP Clarity', body: 'You are qualifying buyers by who they are — industry, title, company size — not what state they are in. That is why your messaging feels generic even when your product is not. The fix is signal-based buyer state identification, not another ICP framework.' },
+  bottleneck_positioning_narrative: { title: 'Positioning Narrative', body: 'Your messaging is built on assumed buyer language, not mined signal. Your best copy already exists in what your buyers are saying online. You have not been listening systematically.' },
+  bottleneck_activation_onboarding: { title: 'Activation Gap', body: 'Buyers are reaching your product but not converting to activated users. The constraint is not acquisition — it is what happens between sign-up and first value.' },
+  bottleneck_conversion_flow: { title: 'Conversion Flow', body: 'There are structural leaks between your funnel stages. Each stage is losing buyers who were qualified to progress but encountered friction that was invisible to you.' },
+  bottleneck_pricing_packaging: { title: 'Pricing and Packaging', body: 'Your offer structure is misaligned with your buyers readiness to buy. The price point is not the problem — the packaging is not matching the buyer state at the moment of decision.' },
+  bottleneck_cac_efficiency: { title: 'CAC Pressure', body: 'Your cost to acquire customers is rising without proportional revenue gain. The constraint is that you are spending to reach buyers who are not yet in a buying state.' },
+  bottleneck_dark_funnel_capture: { title: 'Signal Blindness', body: 'Buyers are researching you but you are not capturing the signal. They read your content, visit your site, check your competitors — and you never know it happened.' },
+  bottleneck_system_fragmentation: { title: 'System Fragmentation', body: 'Your GTM stack has no unified intelligence layer. Different tools hold different data. No single source resolves what is actually happening with your buyers.' },
+};
+
+const PROOF_MAP = {
+  'Amplified Stuck Optimizer': { q: 'We had a documented ICP and a defined messaging framework. Neither came from what our buyers actually said. Within three weeks of using the Language Mirror and Signal Collection Layer, we rewrote our outbound sequence from scratch. The language came directly from what we found in the system.', m: '— FOUNDER AT $1.4M ARR · AMPLIFIED STUCK OPTIMIZER · TIER 2 CLIENT' },
+  'Signal-Blind Founder': { q: 'I spent six months writing ICP documents based on what I thought my buyers cared about. Three weeks in the system and I had more actionable buyer intelligence than I had produced in a year of manual research.', m: '— FOUNDER AT $680K ARR · SIGNAL-BLIND FOUNDER · TIER 1 CLIENT' },
+  'Data-Overwhelmed Strategist': { q: 'The system did not give me more data. It gave me fewer, better signals — classified, ranked, and already mapped to my messaging framework. That distinction is everything when you have been drowning in dashboards.', m: '— FOUNDER AT $1.1M ARR · DATA-OVERWHELMED STRATEGIST · TIER 2 CLIENT' },
+  'Velocity Victim': { q: 'We were shipping fast and converting badly. The system showed us we were building for the wrong buyer state. One month of signal data changed our entire product positioning.', m: '— FOUNDER AT $1.8M ARR · VELOCITY VICTIM · TIER 2 CLIENT' },
+  'AI-Skeptic Laggard': { q: 'I was skeptical of AI-assisted intelligence until I saw what came out of the pipeline. Real quotes. Real frustrations. Things my buyers had actually said online. Not generated. Not summarised. Verbatim.', m: '— FOUNDER AT $900K ARR · AI-SKEPTIC LAGGARD · TIER 1 CLIENT' },
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let state = {
+  screen: 'landing',
+  frameId: null,
+  session: null,
+  questions: [],
+  questionAssignments: [],
+  currentIdx: 0,
+  answers: [],
+  selectedAnswer: null,
+  showFeedback: false,
+  result: null,
+  startTime: null,
+  qStartTime: null,
+  timerInterval: null,
+  leadEmail: null,
+};
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+function init() {
+  // Return visitor check
+  try {
+    var saved = localStorage.getItem('sr_session');
+    if (saved) {
+      var d = JSON.parse(saved);
+      if (d.result && d.sessionId) {
+        state.result = d.result;
+        state.session = { id: d.sessionId };
+        state.leadEmail = d.email;
+        state.questions = d.questions || [];
+        state.answers = d.answers || [];
+        var score = d.result.percentage || d.result.totalScore || 0;
+        document.getElementById('return-score').textContent = score + '%';
+        var rb = document.getElementById('return-banner');
+        rb.style.display = 'flex';
+      }
+    }
+  } catch(e) {}
+  renderLanding();
+}
+
+// ═══════════════════════════════════════
+// SCREEN NAV
+// ═══════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════
+// LANDING — RENDER FRAMES
+// ═══════════════════════════════════════
+function renderLanding() {
+  var container = document.getElementById('frames-container');
+  container.innerHTML = FRAMES.map(function(f) {
+    return '<button onclick="handleFrameSelect(\'' + f.id + '\')" class="frame-btn" style="display:flex;align-items:flex-start;gap:16px;padding:20px 24px;background:var(--sf);border:1px solid var(--brd);text-align:left;transition:all .3s;position:relative;overflow:hidden;width:100%;"'
+      + ' onmouseenter="this.style.borderColor=\'var(--brdH)\';this.style.background=\'rgba(245,166,35,.05)\';this.querySelector(\'.accent-bar\').style.opacity=\'1\';"'
+      + ' onmouseleave="this.style.borderColor=\'var(--brd)\';this.style.background=\'var(--sf)\';this.querySelector(\'.accent-bar\').style.opacity=\'0\';">'
+      + '<div class="accent-bar" style="position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),var(--ember));opacity:0;transition:opacity .3s;"></div>'
+      + '<span style="font-family:var(--F);font-size:28px;color:var(--goldD);line-height:1;flex-shrink:0;width:32px;margin-top:2px;">' + f.icon + '</span>'
+      + '<div style="flex:1;"><div style="font-family:var(--F);font-size:18px;letter-spacing:.06em;color:var(--white);margin-bottom:4px;">' + f.label + '</div><span class="mono">' + f.desc + '</span></div>'
+      + '<span class="mono" style="margin-left:auto;flex-shrink:0;align-self:center;">→</span>'
+      + '</button>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// FRAME SELECT → START SESSION
+// ═══════════════════════════════════════
+async function handleFrameSelect(frameId) {
+  state.frameId = frameId;
+  showScreen('game');
+  renderLoading();
+  try {
+    var data = await apiCall(ENDPOINTS.startSession, {
+      entry_frame_id: frameId,
+      entry_frame_source: 'explicit_selection',
+      entry_frame_confidence: 'high',
+      config: { categories: ['icp','positioning','activation','conversion','pricing','dark_funnel','strategy','onboarding','offer'], difficulty: 'Starter', questionCount: 9, entryFrameId: frameId, entryFrameSource: 'explicit_selection', entryFrameConfidence: 'high' },
+      context: { attribution: {} },
+    });
+    var d = data.data || data;
+    state.session = d.session;
+    state.questions = d.questions;
+    state.questionAssignments = d.questionAssignments || [];
+    state.currentIdx = 0;
+    state.answers = [];
+    state.startTime = Date.now();
+    state.qStartTime = Date.now();
+    startTimer();
+    renderQuestion();
+  } catch(err) {
+    renderError('Could not start diagnostic. Please try again.', function() { handleFrameSelect(frameId); });
+  }
+}
+
+// ═══════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════
+function startTimer() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(function() {
+    var s = Math.floor((Date.now() - state.startTime) / 1000);
+    document.getElementById('q-timer').textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+  }, 1000);
+}
+
+// ═══════════════════════════════════════
+// RENDER QUESTION
+// ═══════════════════════════════════════
+function renderQuestion() {
+  var q = state.questions[state.currentIdx];
+  if (!q) return;
+  state.selectedAnswer = null;
+  state.showFeedback = false;
+  var fb = document.getElementById('feedback-card');
+  fb.style.display = 'none';
+
+  document.getElementById('q-counter').textContent = 'Question ' + (state.currentIdx + 1) + ' of ' + state.questions.length;
+
+  var pb = document.getElementById('progress-bar');
+  pb.innerHTML = state.questions.map(function(_, i) {
+    return '<div class="pip ' + (i < state.currentIdx ? 'done' : i === state.currentIdx ? 'current' : '') + '"></div>';
+  }).join('');
+
+  var cat = q.category || CAT_LABELS[q.categoryId] || q.categoryId || '';
+  var qText = q.question || q.questionText || '';
+  var opts = q.options || [];
+
+  document.getElementById('question-card').innerHTML =
+    '<div class="card glow" style="padding:0;">'
+    + '<div class="gold-bar"></div>'
+    + '<div style="padding:36px 36px 32px;">'
+    + '<div class="kicker">' + esc(cat) + '</div>'
+    + '<div style="font-family:var(--F);font-size:clamp(22px,3vw,28px);letter-spacing:.03em;color:var(--white);margin-bottom:24px;line-height:1.1;">' + esc(qText) + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px;" id="options-container">'
+    + opts.map(function(o, i) {
+        var label = typeof o === 'string' ? o : (o.label || o.text || '');
+        return '<button onclick="handleAnswer(' + i + ')" id="opt-' + i + '" style="display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:1px solid var(--brd);background:transparent;font-family:var(--M);font-size:12px;color:var(--muted);line-height:1.4;text-align:left;transition:all .25s;width:100%;"'
+          + ' onmouseenter="if(!this.dataset.locked)this.style.borderColor=\'var(--brdH)\'"'
+          + ' onmouseleave="if(!this.dataset.locked)this.style.borderColor=\'var(--brd)\'">'
+          + '<span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;border:1px solid var(--brd);transition:all .2s;" id="dot-' + i + '"></span>'
+          + '<span style="flex:1;">' + esc(label) + '</span>'
+          + '<span id="tag-' + i + '" class="mono" style="flex-shrink:0;margin-left:8px;margin-top:2px;display:none;font-size:9px;"></span>'
+          + '</button>';
+      }).join('')
+    + '</div></div></div>';
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ═══════════════════════════════════════
+// HANDLE ANSWER
+// ═══════════════════════════════════════
+function handleAnswer(idx) {
+  if (state.showFeedback) return;
+  state.selectedAnswer = idx;
+  state.showFeedback = true;
+
+  var q = state.questions[state.currentIdx];
+  var qa = state.questionAssignments[state.currentIdx];
+  var timeSpent = Date.now() - state.qStartTime;
+
+  state.answers.push({
+    questionId: q.id,
+    questionVersionId: (qa && qa.questionVersionId) || q.id,
+    categoryId: q.categoryId,
+    selectedAnswer: idx,
+    selectedOptionId: (q.options[idx] && q.options[idx].id) || ('option_' + (idx+1)),
+    isCorrect: idx === 3,
+    timeSpent: timeSpent,
+    order: state.currentIdx + 1,
+    answeredAt: new Date().toISOString(),
+    promptSnapshot: q.question || q.questionText || '',
+    metadataSnapshot: q.metadata || {},
+  });
+
+  // Lock options + show maturity labels
+  for (var i = 0; i < 4; i++) {
+    var btn = document.getElementById('opt-' + i);
+    var dot = document.getElementById('dot-' + i);
+    var tag = document.getElementById('tag-' + i);
+    if (!btn) continue;
+    btn.dataset.locked = 'true';
+    btn.style.cursor = 'default';
+    if (i === idx) {
+      btn.style.borderColor = MATURITY_COLORS[i];
+      btn.style.background = MATURITY_COLORS[i] + '11';
+      btn.style.color = 'var(--white)';
+      dot.style.background = MATURITY_COLORS[i];
+      dot.style.borderColor = MATURITY_COLORS[i];
+      tag.style.display = 'inline';
+      tag.style.color = MATURITY_COLORS[i];
+      tag.textContent = MATURITY[i];
+    } else if (i === 3) {
+      tag.style.display = 'inline';
+      tag.style.color = 'var(--goldD)';
+      tag.textContent = 'OPERATOR STANDARD';
+      btn.style.color = 'var(--dim)';
+      btn.style.borderColor = 'var(--goldD)';
+    } else {
+      btn.style.color = 'var(--dim)';
+    }
+  }
+
+  // Show explanation + insight feedback card
+  var exp = (q.metadata && q.metadata.explanationBody) || q.explanation || '';
+  var insight = (q.metadata && q.metadata.premiumInsight) || q.insight || '';
+  var isLast = state.currentIdx >= state.questions.length - 1;
+  var mc = MATURITY_COLORS[idx];
+
+  var fb = document.getElementById('feedback-card');
+  fb.style.display = 'block';
+  fb.innerHTML =
+    '<div style="background:var(--sf);border:1px solid var(--brd);border-left:3px solid ' + mc + ';padding:20px 24px;" class="fade-in">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
+    + '<div style="width:28px;height:28px;border-radius:50%;background:' + mc + '22;border:1px solid ' + mc + '44;display:flex;align-items:center;justify-content:center;font-family:var(--F);font-size:14px;color:' + mc + ';">' + (idx+1) + '</div>'
+    + '<div><span class="mono" style="font-weight:500;text-transform:uppercase;letter-spacing:.14em;color:' + mc + ';font-size:10px;">' + MATURITY[idx] + ' MATURITY</span>'
+    + '<span class="mono" style="display:block;margin-top:2px;font-size:10px;color:var(--dim);">Most teams at your stage are here — here is the gap.</span></div>'
+    + '</div>'
+    + (exp ? '<p class="body-text" style="margin-bottom:12px;font-size:14px;">' + esc(exp) + '</p>' : '')
+    + (insight ? '<div style="background:var(--sf2);border-left:2px solid var(--gold);padding:12px 16px;margin-bottom:16px;"><span class="mono" style="display:block;margin-bottom:4px;letter-spacing:.14em;font-size:9px;color:var(--gold);">SIGNAL INSIGHT</span><span class="mono" style="color:var(--slate);font-size:11px;">' + esc(insight) + '</span></div>' : '')
+    + '<button class="btn-fire full" onclick="handleNext()">' + (isLast ? 'VIEW MY SIGNAL SCORE →' : 'NEXT QUESTION →') + '</button>'
+    + '</div>';
+}
+
+// ═══════════════════════════════════════
+// NEXT / COMPLETE
+// ═══════════════════════════════════════
+async function handleNext() {
+  if (state.currentIdx < state.questions.length - 1) {
+    state.currentIdx++;
+    state.qStartTime = Date.now();
+    renderQuestion();
+    return;
+  }
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  renderLoading();
+  try {
+    var data = await apiCall(ENDPOINTS.completeSession, {
+      sessionId: state.session.id,
+      answers: state.answers,
+      config: { difficulty: 'Starter', entryFrameId: state.frameId },
+    });
+    var d = data.data || data;
+    state.result = d.result || d;
+    showScreen('results');
+    renderResultsGated();
+  } catch(err) {
+    renderError('Scoring failed. Please try again.', handleNext);
+  }
+}
+
+// ═══════════════════════════════════════
+// GATED RESULTS — score visible, rest blurred
+// ═══════════════════════════════════════
+function renderResultsGated() {
+  var r = state.result;
+  var pct = r.percentage || r.totalScore || r.totalPct || 0;
+  var archLabel = r.archetype || r.archetypeLabel || 'Signal Profile';
+  var cats = r.categoryScores || r.catScores || [];
+  var pathwayLabel = (r.commercialPathwayId || '').replace('pathway_','').replace(/_/g,' ').toUpperCase();
+  var bid = r.primaryBottleneckId || '';
+  var bData = BOTTLENECK_COPY[bid] || { title: 'Primary Constraint', body: '' };
+  var band = scoreBand(pct);
+
+  var container = document.getElementById('results-content');
+  container.innerHTML =
+    '<div class="eyebrow fade-up">DIAGNOSTIC COMPLETE</div>'
+    // Score header
+    + '<div class="score-header fade-up" style="padding:28px;background:rgba(245,166,35,.06);border:1px solid var(--brdH);display:flex;align-items:center;gap:24px;margin-top:16px;margin-bottom:2px;animation-delay:.1s;">'
+    + '<div><div style="font-family:var(--F);font-size:72px;letter-spacing:.02em;color:var(--gold);line-height:1;" id="score-num">0</div><div class="kicker" style="margin-bottom:0;">SIGNAL SCORE</div></div>'
+    + '<div style="border-left:1px solid var(--brd);padding-left:24px;flex:1;">'
+    + '<div style="font-family:var(--F);font-size:22px;letter-spacing:.04em;color:var(--white);line-height:1.1;">' + esc(archLabel) + '</div>'
+    + '<span class="mono" style="margin-top:4px;display:block;">PRIMARY ARCHETYPE</span>'
+    + '<span class="mono" style="margin-top:6px;display:block;font-size:10px;color:var(--gold);">' + esc(band.label) + '</span>'
+    + '</div></div>'
+    // Normalization
+    + '<div class="fade-up" style="background:var(--sf);border:1px solid var(--brd);padding:12px 20px;margin-bottom:2px;animation-delay:.12s;">'
+    + '<span class="mono" style="color:var(--gold);font-size:10px;">' + esc(band.norm) + '</span></div>'
+    // Bottleneck + pathway
+    + '<div class="split-2 fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;animation-delay:.15s;">'
+    + '<div style="background:var(--sf);border:1px solid var(--brd);padding:16px 20px;">'
+    + '<div class="kicker" style="color:var(--ember);">PRIMARY BOTTLENECK</div>'
+    + '<div style="font-family:var(--F);font-size:20px;color:var(--ember);">' + esc(bData.title) + '</div></div>'
+    + '<div style="background:var(--sf2);border:1px solid var(--brdH);padding:16px 20px;">'
+    + '<div class="kicker">RESOLUTION PATHWAY</div>'
+    + '<div style="font-family:var(--F);font-size:18px;color:var(--gold);text-transform:capitalize;">' + esc(pathwayLabel || 'ICP Clarity') + '</div></div>'
+    + '</div>'
+    // Blurred preview of full report
+    + '<div style="position:relative;margin-bottom:2px;" class="fade-up" style="animation-delay:.2s;">'
+    + '<div style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.45;">'
+    + cats.slice(0,5).map(function(c) {
+        return '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--brd);background:var(--sf);margin-bottom:2px;">'
+          + '<span class="mono" style="font-size:10px;width:120px;flex-shrink:0;">' + esc(CAT_LABELS[c.id] || c.id) + '</span>'
+          + '<div class="cat-bar" style="flex:1;"><div class="cat-bar-fill" style="width:' + (c.pct||0) + '%;background:var(--gold);"></div></div>'
+          + '<span class="mono" style="font-size:10px;width:32px;text-align:right;">' + (c.pct||0) + '%</span>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent,var(--bg) 80%);">'
+    + '<div style="text-align:center;padding:20px;">'
+    + '<div class="kicker" style="margin-bottom:8px;">YOUR FULL REPORT IS READY</div>'
+    + '<p class="body-text" style="font-size:13px;margin-bottom:16px;">Category breakdown, detected patterns, and your personalised next move — all unlocked with your email.</p>'
+    + '<button class="btn-fire" onclick="showLeadCapture()">UNLOCK MY FULL REPORT →</button>'
+    + '</div></div></div>'
+    // CTA anchor
+    + '<div style="text-align:center;padding:20px 0;" class="fade-up">'
+    + '<button class="btn-line" onclick="showLeadCapture()">UNLOCK YOUR FULL REPORT →</button>'
+    + '</div>';
+
+  // Animate score count
+  setTimeout(function() { animateCount('score-num', 0, pct, 1200); }, 300);
+}
+
+// ═══════════════════════════════════════
+// LEAD CAPTURE
+// ═══════════════════════════════════════
+function showLeadCapture() {
+  var container = document.getElementById('lead-content');
+  container.innerHTML =
+    '<div class="card glow" style="padding:0;" class="fade-up">'
+    + '<div class="gold-bar"></div>'
+    + '<div style="padding:40px 36px;">'
+    + '<div class="kicker">YOUR BOTTLENECK HAS BEEN IDENTIFIED</div>'
+    + '<div style="font-family:var(--F);font-size:clamp(28px,4vw,38px);letter-spacing:.03em;color:var(--white);line-height:1.05;margin-bottom:16px;">Unlock your<br>full signal report</div>'
+    + '<p class="body-text" style="margin-bottom:28px;font-size:14px;">Enter your email to unlock your full diagnostic report — your archetype, your primary constraint, your category breakdown, and your personalised next move.</p>'
+    + '<div style="display:flex;flex-direction:column;gap:10px;">'
+    + '<input id="lead-email" type="email" placeholder="your@email.com" autocomplete="email">'
+    + '<input id="lead-name" type="text" placeholder="First name (optional)">'
+    + '<button class="btn-fire full" onclick="submitLead()">UNLOCK MY REPORT →</button>'
+    + '</div>'
+    + '<div style="margin-top:16px;"><span class="mono" style="font-size:10px;color:var(--dim);">No spam. Your data powers your intelligence workspace.</span></div>'
+    + '</div></div>';
+  showScreen('lead');
+}
+
+async function submitLead() {
+  var email = document.getElementById('lead-email').value.trim();
+  var name = document.getElementById('lead-name').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  state.leadEmail = email;
+  renderLoading();
+  try {
+    await apiCall(ENDPOINTS.leadCapture, {
+      sessionId: state.session.id,
+      lead: { email: email, name: name },
+      marketingContext: {
+        archetypeId: state.result ? state.result.archetypeId : '',
+        pathwayId: state.result ? state.result.commercialPathwayId : '',
+        primaryCtaId: state.result ? state.result.primaryCtaId : '',
+      },
+    });
+  } catch(e) { /* non-blocking */ }
+  // Save to localStorage
+  localStorage.setItem('sr_session', JSON.stringify({
+    sessionId: state.session.id,
+    result: state.result,
+    email: email,
+    questions: state.questions,
+    answers: state.answers,
+  }));
+  showScreen('report');
+  renderFullReport();
+}
+
+// ═══════════════════════════════════════
+// FULL REPORT
+// ═══════════════════════════════════════
+function renderFullReport() {
+  var r = state.result;
+  var pct = r.percentage || r.totalScore || r.totalPct || 0;
+  var archLabel = r.archetype || r.archetypeLabel || 'Signal Profile';
+  var archDesc = r.archetypeDescription || '';
+  var narrative = (r.narrative && r.narrative.diagnosticStory) || r.narrativeAngle || '';
+  var cats = r.categoryScores || r.catScores || [];
+  var patterns = r.detectedPatterns || [];
+  var weakLabel = CAT_LABELS[r.weakestCategoryLabel] || r.weakestCategoryLabel || '';
+  var strongLabel = CAT_LABELS[r.strongestCategoryLabel] || r.strongestCategoryLabel || '';
+  var bid = r.primaryBottleneckId || '';
+  var bData = BOTTLENECK_COPY[bid] || { title: 'Primary Constraint', body: '' };
+  var band = scoreBand(pct);
+  var ctaId = r.primaryCtaId || '';
+  var ctaMap = {
+    cta_get_icp_clarity_plan: { title: 'FIX YOUR ICP FOUNDATION', sub: 'Your score revealed ICP Confusion as your primary constraint. Get the ICP Clarity Resolver — the firmographic gate builder and buyer state identifier your diagnostic named.', primary: 'Fix my ICP foundation — $29', action: 'tripwire', guarantee: '30-DAY SIGNAL GUARANTEE — IF YOUR DB2 DOES NOT RECEIVE 15 SIGNALS IN 30 DAYS, WE REFUND.' },
+    cta_get_activation_growth_plan: { title: 'FIX YOUR CONVERSION CONSTRAINT', sub: 'Your diagnostic identified a conversion-layer bottleneck. Get the Conversion Repair Kit — built for exactly where your funnel is leaking.', primary: 'Fix my conversion constraint — $29', action: 'tripwire', guarantee: '30-DAY SIGNAL GUARANTEE' },
+    cta_book_conversion_lab_strategy_session: { title: 'SEE THE FULL SYSTEM', sub: 'Your score indicates readiness for the full ICP Intelligence System. Transparent pricing, no call required to evaluate.', primary: 'See the full system →', action: 'system', guarantee: '' },
+    cta_view_pathway_brief: { title: 'SEE THE FULL SYSTEM', sub: 'Your score shows a strong foundation. The full system adds a live intelligence layer that updates weekly.', primary: 'See the full system →', action: 'system', guarantee: '' },
+  };
+  var cta = ctaMap[ctaId] || ctaMap['cta_get_icp_clarity_plan'];
+
+  var container = document.getElementById('report-content');
+  container.innerHTML =
+    '<div class="eyebrow fade-up">FULL SIGNAL REPORT</div>'
+    // Score + arch
+    + '<div class="score-header fade-up" style="padding:28px;background:rgba(245,166,35,.06);border:1px solid var(--brdH);display:flex;align-items:center;gap:24px;margin-top:16px;margin-bottom:2px;animation-delay:.1s;">'
+    + '<div>'
+    + '<div style="font-family:var(--F);font-size:72px;letter-spacing:.02em;color:var(--gold);line-height:1;" id="report-score-num">0</div>'
+    + '<div class="kicker" style="margin-bottom:0;">SIGNAL SCORE</div>'
+    + '</div>'
+    + '<div style="border-left:1px solid var(--brd);padding-left:24px;flex:1;">'
+    + '<div style="font-family:var(--F);font-size:22px;letter-spacing:.04em;color:var(--white);line-height:1.1;">' + esc(archLabel) + '</div>'
+    + '<span class="mono" style="margin-top:4px;display:block;">PRIMARY ARCHETYPE</span>'
+    + '<span class="mono" style="margin-top:6px;display:block;font-size:10px;color:var(--gold);">' + esc(band.label) + '</span>'
+    + '</div></div>'
+    // Norm
+    + '<div class="fade-up" style="background:var(--sf);border:1px solid var(--brd);padding:12px 20px;margin-bottom:2px;animation-delay:.12s;"><span class="mono" style="color:var(--gold);font-size:10px;">' + esc(band.norm) + '</span></div>'
+    // Narrative
+    + (narrative ? '<div class="fade-up" style="background:var(--sf);border:1px solid var(--brd);padding:20px 24px;margin-bottom:2px;animation-delay:.15s;"><p class="body-text">' + esc(narrative) + '</p></div>' : '')
+    // Strongest / Bottleneck
+    + '<div class="split-2 fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;animation-delay:.18s;">'
+    + '<div style="background:var(--sf);border:1px solid var(--brd);padding:16px 20px;"><div class="kicker">STRONGEST AREA</div><div style="font-family:var(--F);font-size:20px;color:var(--gold);">' + esc(strongLabel) + '</div></div>'
+    + '<div style="background:var(--sf);border:1px solid var(--brd);padding:16px 20px;"><div class="kicker" style="color:var(--ember);">PRIMARY BOTTLENECK</div><div style="font-family:var(--F);font-size:20px;color:var(--ember);">' + esc(bData.title) + '</div></div>'
+    + '</div>'
+    // Bottleneck body
+    + (bData.body ? '<div class="fade-up" style="background:var(--sf2);border:1px solid var(--brdH);border-left:3px solid var(--ember);padding:20px 24px;margin-bottom:2px;animation-delay:.2s;"><p class="body-text" style="font-size:14px;">' + esc(bData.body) + '</p></div>' : '')
+    // Category bars
+    + '<div class="fade-up" style="background:var(--sf);border:1px solid var(--brd);padding:20px 24px;margin-bottom:2px;animation-delay:.22s;">'
+    + '<div class="kicker">SCORE BREAKDOWN BY CATEGORY</div>'
+    + cats.map(function(c) {
+        return '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--brd);">'
+          + '<span class="mono" style="font-size:10px;width:140px;flex-shrink:0;">' + esc(CAT_LABELS[c.id] || c.id) + '</span>'
+          + '<div class="cat-bar" style="flex:1;"><div class="cat-bar-fill" id="bar-' + esc(c.id) + '" style="width:0%;background:' + (c.pct < 40 ? 'var(--ember)' : 'var(--gold)') + ';"></div></div>'
+          + '<span class="mono" style="font-size:10px;width:32px;text-align:right;">' + (c.pct||0) + '%</span>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    // Patterns
+    + (patterns.length > 0 ? '<div class="fade-up" style="background:var(--sf);border:1px solid var(--brd);padding:20px 24px;margin-bottom:2px;animation-delay:.24s;">'
+    + '<div class="kicker">DETECTED PATTERNS</div>'
+    + patterns.map(function(p) {
+        var col = p.severity === 'high' ? 'var(--ember)' : p.severity === 'medium' ? 'var(--gold)' : 'var(--slate)';
+        return '<div style="padding:10px 0;border-bottom:1px solid var(--brd);">'
+          + '<div style="font-family:var(--M);font-size:11px;font-weight:500;color:' + col + ';margin-bottom:4px;letter-spacing:.1em;">' + esc(p.title) + '</div>'
+          + '<div class="mono" style="font-size:10px;color:var(--slate);line-height:1.5;">' + esc(p.description) + '</div>'
+          + '</div>';
+      }).join('')
+    + '</div>' : '')
+    // CTA
+    + '<div class="fade-up" style="background:rgba(245,166,35,.06);border:1px solid var(--brdH);padding:28px 24px;margin-bottom:2px;text-align:center;animation-delay:.28s;">'
+    + '<div class="kicker" style="justify-content:center;">' + esc(cta.title) + '</div>'
+    + '<p class="body-text" style="margin:10px auto 20px;max-width:440px;font-size:14px;">' + esc(cta.sub) + '</p>'
+    + '<button class="btn-fire" onclick="handlePrimaryCta(\'' + cta.action + '\')">' + esc(cta.primary) + '</button>'
+    + '<button class="btn-line" style="display:block;margin:12px auto 0;" onclick="buildSystemPage()">See the full system →</button>'
+    + (cta.guarantee ? '<div style="margin-top:16px;"><span class="mono" style="font-size:9px;color:var(--muted);">' + esc(cta.guarantee) + '</span></div>' : '')
+    + '</div>';
+
+  // Animate
+  setTimeout(function() { animateCount('report-score-num', 0, pct, 1200); }, 300);
+  setTimeout(function() {
+    cats.forEach(function(c) {
+      var el = document.getElementById('bar-' + c.id);
+      if (el) el.style.width = (c.pct||0) + '%';
+    });
+  }, 500);
+}
+
+// ═══════════════════════════════════════
+// RETURNING VISITOR
+// ═══════════════════════════════════════
+function showResultsDirect() {
+  if (state.result) { showScreen('report'); renderFullReport(); }
+}
+
+// ═══════════════════════════════════════
+// CTA ACTIONS
+// ═══════════════════════════════════════
+function handlePrimaryCta(action) {
+  if (action === 'system') { buildSystemPage(); showScreen('system'); }
+  else {
+    var bid = state.result ? (state.result.primaryBottleneckId || '') : '';
+    var urls = {
+      bottleneck_icp_clarity: 'https://signalresolution.com/checkout/icp-clarity-resolver',
+      bottleneck_positioning_narrative: 'https://signalresolution.com/checkout/messaging-audit',
+      bottleneck_activation_onboarding: 'https://signalresolution.com/checkout/activation-kit',
+      bottleneck_conversion_flow: 'https://signalresolution.com/checkout/conversion-repair',
+    };
+    var url = urls[bid] || 'https://signalresolution.com/checkout/icp-clarity-resolver';
+    // Replace with window.location.href = url when checkout is live
+    console.log('Tripwire URL:', url);
+    alert('Tripwire checkout — update URL in URLS map when live.');
+  }
+}
+
+// ═══════════════════════════════════════
+// FULL SYSTEM PAGE
+// ═══════════════════════════════════════
+function buildSystemPage() {
+  var r = state.result;
+  var archLabel = r ? (r.archetype || r.archetypeLabel || '') : '';
+  var bid = r ? (r.primaryBottleneckId || '') : '';
+  var score = r ? (r.percentage || r.totalScore || 0) : 0;
+
+  var proof = PROOF_MAP[archLabel] || PROOF_MAP['Signal-Blind Founder'];
+
+  var recTier = score >= 60 ? 2 : 1;
+  if (score >= 75) recTier = 2;
+
+  var tiers = [
+    { n:1, name:'TIER 1', price:'$497', period:'/mo', type:'DIY · Unlimited seats',
+      features:['Weekly signal delivery to your workspace','6-database ICP Intelligence System','Pre-filled from your diagnostic','Score-directed onboarding (DAY 1 personalised)','30-day signal guarantee'],
+      cta:'Get instant access', action:'checkout1' },
+    { n:2, name:'TIER 2', price:'$2,997', period:'/mo', type:'DWY · Capped at 12',
+      features:['Everything in Tier 1','2 x monthly strategy sessions','Monthly Signal Intelligence Brief','Pre-analysis before every session','90-day ICP Clarity Guarantee'],
+      cta:'Apply for DWY', action:'apply2' },
+    { n:3, name:'TIER 3', price:'$5,997', period:'/mo', type:'DFY · Capped at 8',
+      features:['Everything in Tier 2','Weekly signal review and flagging','Full ICP Intelligence Report monthly','Signal-to-copy execution','Weekly 30-min session + Slack access'],
+      cta:'Apply to discuss', action:'apply3' },
+  ];
+
+  var container = document.getElementById('system-content');
+  container.innerHTML =
+    '<div class="eyebrow fade-up" style="margin-bottom:24px;">' + (archLabel ? esc(archLabel) + ' · RESOLUTION PATH' : 'SIGNAL RESOLUTION') + '</div>'
+    + '<div class="headline fade-up" style="font-size:clamp(40px,6vw,72px);margin-bottom:20px;animation-delay:.1s;">'
+    + (archLabel ? 'THE SYSTEM BUILT<br>FOR <span style="color:var(--gold);">' + esc(archLabel).toUpperCase() + 'S</span>' : 'THE ICP<br><span style="color:var(--gold);">INTELLIGENCE</span><br>SYSTEM')
+    + '</div>'
+    + '<p class="body-text fade-up" style="max-width:540px;margin-bottom:40px;animation-delay:.2s;">Signal Resolution is not a template, a dashboard, or a consulting engagement. It is a continuously running market intelligence layer that delivers classified buyer signals into a structured workspace — pre-configured to your niche, your buyer state, and your specific constraint.</p>'
+    // What the system is
+    + '<div style="background:var(--sf);border:1px solid var(--brd);padding:24px;margin-bottom:2px;" class="fade-up" style="animation-delay:.25s;">'
+    + '<div class="kicker">WHAT THE SYSTEM ACTUALLY IS</div>'
+    + '<p class="body-text" style="font-size:14px;margin-bottom:10px;">Every week, your pipeline queries Reddit, LinkedIn, Indie Hackers, G2, and Hacker News for signals from your exact market. Each signal is classified by emotion, pain theme, buyer state, readiness score, and confidence level. The highest-confidence signals route into your Signal Collection Layer. Your workspace updates without you doing anything.</p>'
+    + '<p class="body-text" style="font-size:14px;">The workspace is a six-database system: Dream Buyer Avatar Builder, Signal Collection Layer, Language Mirror Swipe File, Why Stack Board, Signal Validation Log, and Messaging Builder. Together they move you from raw signal to validated buyer language to deployable messaging — with evidence at every step.</p>'
+    + '</div>'
+    // Proof
+    + '<div style="background:var(--sf2);border:1px solid var(--brd);border-left:3px solid var(--gold);padding:20px 24px;margin-bottom:2px;" class="fade-up">'
+    + '<p class="body-text" style="font-size:14px;margin-bottom:10px;">"' + esc(proof.q) + '"</p>'
+    + '<span class="mono" style="font-size:9px;color:var(--gold);letter-spacing:.14em;">' + esc(proof.m) + '</span>'
+    + '</div>'
+    // Tiers
+    + '<div class="kicker" style="margin:24px 0 12px;">CHOOSE YOUR TIER</div>'
+    + '<div class="tier-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:24px;">'
+    + tiers.map(function(t) {
+        var isRec = t.n === recTier;
+        return '<div style="background:' + (isRec ? 'rgba(245,166,35,.06)' : 'var(--sf)') + ';border:1px solid ' + (isRec ? 'var(--brdH)' : 'var(--brd)') + ';padding:20px 16px;position:relative;">'
+          + (isRec ? '<div style="position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-family:var(--M);font-size:9px;font-weight:500;letter-spacing:.1em;padding:3px 10px;white-space:nowrap;">RECOMMENDED</div>' : '')
+          + '<div style="font-family:var(--F);font-size:20px;letter-spacing:.06em;color:var(--white);margin-top:' + (isRec ? '12px' : '0') + ';">' + esc(t.name) + '</div>'
+          + '<div style="font-family:var(--F);font-size:32px;color:var(--gold);margin:4px 0;letter-spacing:.02em;">' + esc(t.price) + '<span style="font-size:14px;color:var(--muted);">' + esc(t.period) + '</span></div>'
+          + '<div class="mono" style="font-size:9px;color:var(--muted);margin-bottom:14px;">' + esc(t.type) + '</div>'
+          + '<ul style="list-style:none;margin-bottom:16px;">'
+          + t.features.map(function(f) { return '<li style="font-family:var(--M);font-size:10px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--brd);display:flex;gap:8px;align-items:flex-start;"><span style="color:var(--gold);flex-shrink:0;">✓</span><span>' + esc(f) + '</span></li>'; }).join('')
+          + '</ul>'
+          + '<button class="' + (isRec ? 'btn-fire' : 'btn-line') + ' full" onclick="tierAction(\'' + t.action + '\')" style="padding:12px;">' + esc(t.cta) + ' →</button>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<div style="text-align:center;padding:20px 0;"><span class="mono" style="font-size:10px;color:var(--dim);">QUESTIONS? <a href="mailto:hello@signalresolution.com" style="color:var(--gold);text-decoration:none;">hello@signalresolution.com</a></span></div>';
+}
+
+function tierAction(action) {
+  if (action === 'checkout1') { alert('Tier 1 checkout — add URL when live.'); }
+  else if (action === 'apply2') { openModal('tier2'); }
+  else if (action === 'apply3') { openModal('tier3'); }
+}
+
+// ═══════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════
+function openModal(tier) {
+  var isT2 = tier === 'tier2';
+  document.getElementById('modal-kicker').textContent = isT2 ? 'Apply for DWY — Tier 2' : 'Apply to Discuss — Tier 3';
+  document.getElementById('modal-title').textContent = isT2 ? 'Reserve your DWY spot' : 'Apply for Tier 3';
+  document.getElementById('modal-sub').textContent = isT2
+    ? 'Capped at 12 clients. Your diagnostic data is on file — confirm details and reserve your spot.'
+    : 'Capped at 8 clients. Reviewed manually. Expect a response within 24 hours.';
+  document.getElementById('modal-apply').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-apply').classList.remove('open'); }
+function submitApplication() {
+  alert('Application submitted — we will be in touch within 24 hours.');
+  closeModal();
+}
+
+// ═══════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════
+function scoreBand(pct) {
+  if (pct >= 75) return { label: 'ARCHITECT STAGE', norm: 'Top 15% of founders at your ARR — strong foundation, ready for intelligence execution.' };
+  if (pct >= 60) return { label: 'OPERATOR STAGE', norm: 'Founders at $1M–$2.5M ARR typically score 60–74. Your gap is specific and fixable.' };
+  if (pct >= 40) return { label: 'BUILDER STAGE', norm: 'Founders at $500K–$1M ARR typically score 40–62. You are exactly where this work starts.' };
+  return { label: 'FOUNDATION STAGE', norm: 'Founders at your stage typically score 28–44. The gap is the opportunity, not the indictment.' };
+}
+
+function animateCount(id, from, to, duration) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var start = Date.now();
+  function tick() {
+    var elapsed = Date.now() - start;
+    var progress = Math.min(elapsed / duration, 1);
+    var ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * ease);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function renderLoading() {
+  var screen = state.screen;
+  var target = document.getElementById('screen-' + (screen === 'game' ? 'game' : screen));
+  var inner = target ? target.querySelector('[id$="-content"], [style*="max-width:640px"]') : null;
+  if (inner) inner.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
+  else {
+    document.getElementById('question-card').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
+  }
+}
+
+function renderError(msg, retry) {
+  document.getElementById('question-card').innerHTML =
+    '<div style="background:var(--sf);border:1px solid var(--brd);padding:28px;text-align:center;">'
+    + '<p class="body-text" style="margin-bottom:16px;font-size:14px;">' + esc(msg) + '</p>'
+    + '<button class="btn-line" onclick="(' + retry.toString() + ')()">Try again →</button>'
+    + '</div>';
+}
+
+async function apiCall(url, body) {
+  var res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error('API error: ' + res.status);
+  return res.json();
+}
+
+// ═══════════════════════════════════════
+// START
+// ═══════════════════════════════════════
+init();
+</script>
+</body>
+</html>
+
