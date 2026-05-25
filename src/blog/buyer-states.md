@@ -5,6 +5,7 @@ description: AI changed how companies experience and articulate their problems. 
 date: 2026-02-14
 category: Psychographics
 featured: false
+readTime: "8 min"
 permalink: /blog/buyer-states/
 ---
 

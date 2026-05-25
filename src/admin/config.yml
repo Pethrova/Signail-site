@@ -4,7 +4,7 @@
 
 backend:
   name: github
-  repo: YOUR-GITHUB-USERNAME/signal-resolution   # ← Replace with your actual repo
+  repo: Pethrova/Signal-site
   branch: main
 
 # Where uploaded images get stored

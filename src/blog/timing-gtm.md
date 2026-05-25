@@ -5,6 +5,7 @@ description: Every outbound framework treats timing as an afterthought. That's t
 date: 2026-01-20
 category: Signal Theory
 featured: false
+readTime: "7 min"
 permalink: /blog/timing-gtm/
 ---
 

@@ -5,6 +5,7 @@ description: AI agents have abstracted away integration pain. Tool count no long
 date: 2026-03-10
 category: ICP Methodology
 featured: true
+readTime: "12 min"
 permalink: /blog/technographic-signals/
 ---
 
