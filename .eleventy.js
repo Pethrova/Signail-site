@@ -6,6 +6,8 @@ module.exports = function(eleventyConfig) {
   // These folders go to output as-is (CSS, JS, fonts, images)
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin");
+  eleventyConfig.addPassthroughCopy("src/diagnostic.html");
+  eleventyConfig.ignores.add("src/diagnostic.html");
 
   // ── FILTERS ────────────────────────────────────────────────────────────────
   // Format dates for display e.g. "Mar 2026"
