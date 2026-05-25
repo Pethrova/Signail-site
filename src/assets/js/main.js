@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   window.applyFilters=function(value){
     document.querySelectorAll('#postGrid .post-card').forEach(card=>{
-      const cat=(card.dataset.category||'').toLowerCase();
+      const cat=(card.dataset.cat||'').toLowerCase();
       const text=((card.dataset.title||'')+' '+(card.dataset.description||'')).toLowerCase();
       const catOk=activeCategory==='all' || cat===activeCategory;
       const textOk=!value || text.includes(value);
