@@ -218,11 +218,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 // ═══════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════
-const API_BASE = '/api/diagnostic';
+const API_BASE = 'https://data009.app.n8n.cloud/webhook';
 const ENDPOINTS = {
-  startSession: API_BASE + '/start',
-  completeSession: API_BASE + '/complete',
-  leadCapture: API_BASE + '/lead',
+  startSession: API_BASE + '/diagnostic-session-start',
+  completeSession: API_BASE + '/diagnostic-session-complete',
+  leadCapture: API_BASE + '/diagnostic-lead-capture',
 };
 
 const MATURITY = ['Ad Hoc', 'Emerging', 'Operational', 'Evidence-Led'];
@@ -870,12 +870,15 @@ function renderLoading() {
   var inner = target ? target.querySelector('[id$="-content"], [style*="max-width:640px"]') : null;
   if (inner) inner.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
   else {
-    document.getElementById('question-card').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
+    var qc = document.getElementById('question-card');
+    if (qc) qc.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
   }
 }
 
 function renderError(msg, retry) {
-  document.getElementById('question-card').innerHTML =
+  var card = document.getElementById('question-card');
+  if (!card) { console.error('renderError:', msg); return; }
+  card.innerHTML =
     '<div style="background:var(--sf);border:1px solid var(--brd);padding:28px;text-align:center;">'
     + '<p class="body-text" style="margin-bottom:16px;font-size:14px;">' + esc(msg) + '</p>'
     + '<button class="btn-line" onclick="(' + retry.toString() + ')()">Try again →</button>'
