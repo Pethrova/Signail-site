@@ -543,7 +543,7 @@ async function handleNext() {
 function renderResultsGated() {
   var r = state.result;
   var pct = r.percentage || r.totalScore || r.totalPct || 0;
-  var archLabel = r.archetype || r.archetypeLabel || 'Signal Profile';
+  var archLabel = r.buyerStateLabel || r.archetype || r.archetypeLabel || 'Signal Profile';
   var cats = r.categoryScores || r.catScores || [];
   var pathwayLabel = (r.commercialPathwayId || '').replace('pathway_','').replace(/_/g,' ').toUpperCase();
   var bid = r.primaryBottleneckId || '';
@@ -666,7 +666,7 @@ async function submitLead() {
 function renderFullReport() {
   var r = state.result;
   var pct = r.percentage || r.totalScore || r.totalPct || 0;
-  var archLabel = r.archetype || r.archetypeLabel || 'Signal Profile';
+  var archLabel = r.buyerStateLabel || r.archetype || r.archetypeLabel || 'Signal Profile';
   var archDesc = r.archetypeDescription || '';
   var narrative = (r.narrative && r.narrative.diagnosticStory) || r.narrativeAngle || '';
   var cats = r.categoryScores || r.catScores || [];
@@ -678,12 +678,35 @@ function renderFullReport() {
   var band = scoreBand(pct);
   var ctaId = r.primaryCtaId || '';
   var ctaMap = {
-    cta_get_icp_clarity_plan: { title: archLabel.toUpperCase() + ' — SIGNAL CORRECTION REPORT', sub: 'Your score revealed ICP Confusion as your primary constraint. Get the ICP Clarity Resolver — the firmographic gate builder and buyer state identifier your diagnostic named.', primary: archLabel + ' Signal Correction Report — $29', action: 'tripwire', guarantee: '30-DAY SIGNAL GUARANTEE — IF YOUR DB2 DOES NOT RECEIVE 15 SIGNALS IN 30 DAYS, WE REFUND.' },
-    cta_get_activation_growth_plan: { title: archLabel.toUpperCase() + ' — SIGNAL CORRECTION REPORT', sub: 'Your diagnostic identified a conversion-layer bottleneck. Get the Conversion Repair Kit — built for exactly where your funnel is leaking.', primary: archLabel + ' Conversion Repair Report — $29', action: 'tripwire', guarantee: '30-DAY SIGNAL GUARANTEE' },
-    cta_book_conversion_lab_strategy_session: { title: 'SEE THE FULL SYSTEM', sub: 'Your score indicates readiness for the full ICP Intelligence System. Transparent pricing, no call required to evaluate.', primary: 'See the full system →', action: 'system', guarantee: '' },
-    cta_view_pathway_brief: { title: 'SEE THE FULL SYSTEM', sub: 'Your score shows a strong foundation. The full system adds a live intelligence layer that updates weekly.', primary: 'See the full system →', action: 'system', guarantee: '' },
+    cta_get_icp_clarity_plan: {
+      title: archLabel.toUpperCase() + ' — SIGNAL CORRECTION REPORT',
+      sub: 'Your diagnostic identified ' + bData.title + ' as your primary constraint. The ' + archLabel + ' Signal Correction Report gives you the exact resolution sequence for your current GTM state.',
+      primary: archLabel + ' Signal Correction Report — $29',
+      action: 'tripwire',
+      guarantee: '30-DAY SIGNAL GUARANTEE — IF YOUR DB2 DOES NOT RECEIVE 15 SIGNALS IN 30 DAYS, WE REFUND.'
+    },
+    cta_get_activation_growth_plan: {
+      title: archLabel.toUpperCase() + ' — SIGNAL CORRECTION REPORT',
+      sub: 'Your diagnostic identified ' + bData.title + ' as your primary constraint. The ' + archLabel + ' Signal Correction Report gives you the exact resolution sequence for your current GTM state.',
+      primary: archLabel + ' Signal Correction Report — $29',
+      action: 'tripwire',
+      guarantee: '30-DAY SIGNAL GUARANTEE'
+    },
+    cta_book_conversion_lab_strategy_session: {
+      title: 'SEE THE FULL SYSTEM',
+      sub: 'Your score indicates readiness for the full ICP Intelligence System. Transparent pricing, no call required to evaluate.',
+      primary: 'See the full system →',
+      action: 'system',
+      guarantee: ''
+    },
+    cta_view_pathway_brief: {
+      title: 'SEE THE FULL SYSTEM',
+      sub: 'Your score shows a strong foundation. The full system adds a live intelligence layer that updates weekly.',
+      primary: 'See the full system →',
+      action: 'system',
+      guarantee: ''
+    },
   };
-  console.log('ctaId from result:', ctaId, 'primaryCtaId:', r.primaryCtaId);
   var cta = ctaMap[ctaId] || ctaMap['cta_get_icp_clarity_plan'];
 
   var container = document.getElementById('report-content');
@@ -785,7 +808,7 @@ function handlePrimaryCta(action) {
 // ═══════════════════════════════════════
 function buildSystemPage() {
   var r = state.result;
-  var archLabel = r ? (r.archetype || r.archetypeLabel || '') : '';
+  var archLabel = r ? (r.buyerStateLabel || r.archetype || r.archetypeLabel || '') : '';
   var bid = r ? (r.primaryBottleneckId || '') : '';
   var score = r ? (r.percentage || r.totalScore || 0) : 0;
 
