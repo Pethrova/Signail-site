@@ -397,11 +397,13 @@ function renderQuestion() {
   state.selectedAnswer = null;
   state.showFeedback = false;
   var fb = document.getElementById('feedback-card');
-  fb.style.display = 'none';
+  if (fb) fb.style.display = 'none';
 
-  document.getElementById('q-counter').textContent = 'Question ' + (state.currentIdx + 1) + ' of ' + state.questions.length;
+  var counter = document.getElementById('q-counter');
+  if (counter) counter.textContent = 'Question ' + (state.currentIdx + 1) + ' of ' + state.questions.length;
 
   var pb = document.getElementById('progress-bar');
+  if (!pb) return;
   pb.innerHTML = state.questions.map(function(_, i) {
     return '<div class="pip ' + (i < state.currentIdx ? 'done' : i === state.currentIdx ? 'current' : '') + '"></div>';
   }).join('');
