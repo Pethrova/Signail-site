@@ -372,7 +372,7 @@ async function handleFrameSelect(frameId) {
       } catch(renderErr) {
         console.error('Render failed:', renderErr.message, renderErr.stack);
       }
-    }, 150);
+    }, 300);
   } catch(err) {
     renderError('Could not start diagnostic. Please try again.', function() { handleFrameSelect(frameId); });
   }
@@ -477,15 +477,10 @@ function handleAnswer(idx) {
       btn.style.borderColor = MATURITY_COLORS[i];
       btn.style.background = MATURITY_COLORS[i] + '11';
       btn.style.color = 'var(--white)';
-      dot.style.background = MATURITY_COLORS[i];
-      dot.style.borderColor = MATURITY_COLORS[i];
-      tag.style.display = 'inline';
-      tag.style.color = MATURITY_COLORS[i];
-      tag.textContent = MATURITY[i];
+      if (dot) { dot.style.background = MATURITY_COLORS[i]; dot.style.borderColor = MATURITY_COLORS[i]; }
+      if (tag) { tag.style.display = 'inline'; tag.style.color = MATURITY_COLORS[i]; tag.textContent = MATURITY[i]; }
     } else if (i === 3) {
-      tag.style.display = 'inline';
-      tag.style.color = 'var(--goldD)';
-      tag.textContent = 'OPERATOR STANDARD';
+      if (tag) { tag.style.display = 'inline'; tag.style.color = 'var(--goldD)'; tag.textContent = 'OPERATOR STANDARD'; }
       btn.style.color = 'var(--dim)';
       btn.style.borderColor = 'var(--goldD)';
     } else {
@@ -500,8 +495,8 @@ function handleAnswer(idx) {
   var mc = MATURITY_COLORS[idx];
 
   var fb = document.getElementById('feedback-card');
-  fb.style.display = 'block';
-  fb.innerHTML =
+  if (fb) fb.style.display = 'block';
+  if (fb) fb.innerHTML =
     '<div style="background:var(--sf);border:1px solid var(--brd);border-left:3px solid ' + mc + ';padding:20px 24px;" class="fade-in">'
     + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
     + '<div style="width:28px;height:28px;border-radius:50%;background:' + mc + '22;border:1px solid ' + mc + '44;display:flex;align-items:center;justify-content:center;font-family:var(--F);font-size:14px;color:' + mc + ';">' + (idx+1) + '</div>'
@@ -555,6 +550,7 @@ function renderResultsGated() {
   var band = scoreBand(pct);
 
   var container = document.getElementById('results-content');
+  if (!container) return;
   container.innerHTML =
     '<div class="eyebrow fade-up">DIAGNOSTIC COMPLETE</div>'
     // Score header
@@ -608,6 +604,7 @@ function renderResultsGated() {
 // ═══════════════════════════════════════
 function showLeadCapture() {
   var container = document.getElementById('lead-content');
+  if (!container) return;
   container.innerHTML =
     '<div class="card glow" style="padding:0;" class="fade-up">'
     + '<div class="gold-bar"></div>'
@@ -680,6 +677,7 @@ function renderFullReport() {
   var cta = ctaMap[ctaId] || ctaMap['cta_get_icp_clarity_plan'];
 
   var container = document.getElementById('report-content');
+  if (!container) return;
   container.innerHTML =
     '<div class="eyebrow fade-up">FULL SIGNAL REPORT</div>'
     // Score + arch
@@ -799,6 +797,7 @@ function buildSystemPage() {
   ];
 
   var container = document.getElementById('system-content');
+  if (!container) return;
   container.innerHTML =
     '<div class="eyebrow fade-up" style="margin-bottom:24px;">' + (archLabel ? esc(archLabel) + ' · RESOLUTION PATH' : 'SIGNAL RESOLUTION') + '</div>'
     + '<div class="headline fade-up" style="font-size:clamp(40px,6vw,72px);margin-bottom:20px;animation-delay:.1s;">'
