@@ -10,6 +10,8 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.ignores.add("src/diagnostic.html");
   eleventyConfig.addPassthroughCopy("src/thank-you.html");
   eleventyConfig.ignores.add("src/thank-you.html");
+  eleventyConfig.addPassthroughCopy("src/tripwire.html");
+  eleventyConfig.ignores.add("src/tripwire.html");
 
 
   // ── FILTERS ────────────────────────────────────────────────────────────────

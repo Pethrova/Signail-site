@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Correction Report — Signal Resolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080706;--sf:#0f0e0c;--sf2:#161410;--sf3:#1d1a15;
+  --brd:rgba(255,200,80,0.07);--brdH:rgba(255,200,80,0.18);
+  --gold:#f5a623;--goldH:#ffd166;--goldD:rgba(245,166,35,0.35);
+  --ember:#ff6b35;--slate:#c8c4bb;--muted:#6e6860;--dim:#3a3530;
+  --text:#ede8df;--white:#f7f3ec;
+  --F:'Bebas Neue',sans-serif;
+  --S:'Fraunces',serif;
+  --M:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--S);overflow-x:hidden;min-height:100vh;}
+a{cursor:pointer;text-decoration:none;}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.fade-up{animation:fadeUp .5s ease both;}
+
+/* Shared */
+.gold-bar{height:3px;width:100%;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+.kicker{font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.headline{font-family:var(--F);line-height:.92;letter-spacing:.02em;color:var(--white);}
+.body-text{font-family:var(--S);font-style:italic;font-size:15px;color:var(--slate);line-height:1.7;}
+.mono{font-family:var(--M);font-size:11px;color:var(--muted);letter-spacing:.06em;}
+.section{padding:80px 24px;}
+.inner{max-width:720px;margin:0 auto;}
+
+/* Buttons */
+.btn-fire{display:block;width:100%;text-align:center;background:var(--gold);color:var(--bg);font-family:var(--M);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:18px 32px;border:none;cursor:pointer;transition:all .25s;text-decoration:none;}
+.btn-fire:hover{box-shadow:0 0 60px rgba(245,166,35,.45);transform:translateY(-2px);}
+.btn-line{display:inline-flex;align-items:center;gap:8px;font-family:var(--M);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--brd);padding:12px 24px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.btn-line:hover{color:var(--gold);border-color:rgba(245,166,35,.22);}
+
+/* Ambient */
+.orb-a{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07),transparent 70%);top:-150px;right:-200px;filter:blur(50px);pointer-events:none;}
+.orb-b{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.05),transparent 70%);bottom:-60px;left:-80px;filter:blur(60px);pointer-events:none;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.025) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,black,transparent);pointer-events:none;}
+
+/* Bullet rows */
+.bullet-row{display:flex;gap:20px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--brd);}
+.bullet-row:first-child{padding-top:0;}
+.bullet-row:last-child{border-bottom:none;padding-bottom:0;}
+.bullet-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:6px;}
+.bullet-label{font-family:var(--M);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+
+/* Fit check columns */
+.fit-col{background:var(--sf);border:1px solid var(--brd);padding:28px 24px;}
+.fit-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-family:var(--S);font-style:italic;font-size:14px;color:var(--slate);line-height:1.5;}
+.fit-item:last-child{margin-bottom:0;}
+.fit-check{font-family:var(--M);font-size:11px;flex-shrink:0;margin-top:2px;}
+.fit-check.yes{color:var(--gold);}
+.fit-check.no{color:var(--ember);}
+
+/* Objection rows */
+.obj-row{padding:24px 0;border-bottom:1px solid var(--brd);}
+.obj-row:last-child{border-bottom:none;padding-bottom:0;}
+.obj-q{font-family:var(--M);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+
+/* Responsive */
+@media(max-width:640px){
+  .section{padding:60px 24px;}
+  .hook-inner{flex-direction:column !important;gap:24px !important;}
+  .fit-grid{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<script>
+// ── READ PARAMS ───────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const archetype = params.get('archetype') || 'Signal-Blind Founder';
+const bottleneck = params.get('bottleneck') || 'bottleneck_icp_clarity';
+const score = params.get('score') || '50';
+
+const BOTTLENECK_LABELS = {
+  bottleneck_icp_clarity:           'ICP Clarity',
+  bottleneck_positioning_narrative:  'Positioning Narrative',
+  bottleneck_activation_onboarding:  'Activation Gap',
+  bottleneck_conversion_flow:        'Conversion Flow',
+  bottleneck_pricing_packaging:      'Pricing Signal',
+  bottleneck_dark_funnel_capture:    'Dark Funnel Capture',
+  bottleneck_system_fragmentation:   'System Fragmentation',
+};
+const bottleneckLabel = BOTTLENECK_LABELS[bottleneck] || 'ICP Clarity';
+
+const CHECKOUT = 'https://signalresolution.lemonsqueezy.com/checkout/buy/c5437578-c42b-4831-aad0-2f1ca1d7985d';
+function goToCheckout() {
+  window.location.href = CHECKOUT +
+    '?checkout[custom][archetype]=' + encodeURIComponent(archetype) +
+    '&checkout[custom][bottleneck]=' + encodeURIComponent(bottleneck) +
+    '&checkout[email]=' + encodeURIComponent(params.get('email') || '');
+}
+
+// Inject dynamic text once DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('[data-bottleneck]').forEach(function(el) {
+    el.textContent = bottleneckLabel;
+  });
+  document.querySelectorAll('[data-archetype]').forEach(function(el) {
+    el.textContent = archetype;
+  });
+  document.querySelectorAll('[data-score]').forEach(function(el) {
+    el.textContent = score;
+  });
+  document.querySelectorAll('[data-btn-label]').forEach(function(el) {
+    el.textContent = 'GET MY ' + archetype.toUpperCase() + ' SIGNAL CORRECTION REPORT →';
+  });
+});
+</script>
+
+<!-- ══════════════════════════════
+     SECTION 1 — HOOK (above fold)
+══════════════════════════════ -->
+<section style="position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;padding:80px 24px;">
+  <div class="orb-a"></div>
+  <div class="orb-b"></div>
+  <div class="grid-bg"></div>
+
+  <div class="inner" style="position:relative;z-index:2;width:100%;">
+
+    <div class="kicker fade-up">YOUR DIAGNOSTIC RESULT</div>
+
+    <h1 class="headline fade-up" style="font-size:clamp(40px,7vw,88px);margin-bottom:24px;animation-delay:.08s;">
+      YOUR <span style="color:var(--ember);"><span data-bottleneck></span></span><br>IS COSTING YOU PIPELINE
+    </h1>
+
+    <div class="hook-inner fade-up" style="display:flex;align-items:flex-start;gap:48px;animation-delay:.16s;">
+      <div style="flex:1;max-width:480px;">
+        <p class="body-text" style="font-size:clamp(15px,1.5vw,18px);margin-bottom:32px;">
+          Your score identified <span data-bottleneck style="color:var(--slate);font-style:normal;font-family:var(--M);font-size:12px;letter-spacing:.06em;"></span> as the primary constraint in your GTM signal layer. This report resolves it.
+        </p>
+        <button class="btn-fire" style="display:inline-block;width:auto;padding:16px 36px;" onclick="goToCheckout()">
+          <span data-btn-label>GET MY SIGNAL CORRECTION REPORT →</span>
+        </button>
+      </div>
+
+      <!-- Score display -->
+      <div style="flex-shrink:0;text-align:center;background:rgba(245,166,35,.06);border:1px solid var(--brdH);padding:28px 36px;">
+        <div style="font-family:var(--F);font-size:80px;color:var(--gold);line-height:1;letter-spacing:.02em;"><span data-score></span></div>
+        <div class="kicker" style="margin-bottom:6px;text-align:center;">SIGNAL SCORE</div>
+        <div class="mono" style="font-size:9px;color:var(--dim);white-space:nowrap;"><span data-archetype></span> · BUILDER STAGE</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 2 — WHAT THE REPORT CONTAINS
+══════════════════════════════ -->
+<section class="section" style="background:var(--sf);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);">
+  <div class="inner">
+
+    <div class="kicker">THE <span data-archetype></span> SIGNAL CORRECTION REPORT</div>
+    <h2 class="headline" style="font-size:clamp(28px,4vw,48px);margin-bottom:32px;">EXACTLY WHAT YOU GET</h2>
+
+    <div>
+      <div class="bullet-row">
+        <div class="bullet-dot"></div>
+        <div>
+          <div class="bullet-label">THE CONSTRAINT NAMED</div>
+          <p class="body-text" style="font-size:14px;">Exactly what your diagnostic data shows is breaking your signal layer. Not a category. A mechanism.</p>
+        </div>
+      </div>
+      <div class="bullet-row">
+        <div class="bullet-dot"></div>
+        <div>
+          <div class="bullet-label">THE RESOLUTION SEQUENCE</div>
+          <p class="body-text" style="font-size:14px;">The 4-step correction sequence specific to your bottleneck. Ordered by leverage, not complexity.</p>
+        </div>
+      </div>
+      <div class="bullet-row">
+        <div class="bullet-dot"></div>
+        <div>
+          <div class="bullet-label">YOUR NEXT MOVE</div>
+          <p class="body-text" style="font-size:14px;">One action. The highest-leverage thing to do before your next outreach cycle.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 3 — WHO THIS IS FOR
+══════════════════════════════ -->
+<section class="section">
+  <div class="inner">
+
+    <h2 class="headline" style="font-size:clamp(24px,3.5vw,42px);margin-bottom:24px;">IS THIS FOR YOU?</h2>
+
+    <div class="fit-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+
+      <div class="fit-col">
+        <div class="kicker" style="color:var(--gold);margin-bottom:16px;">THIS IS FOR YOU IF:</div>
+        <div class="fit-item"><span class="fit-check yes">✓</span><span>You scored 40–65 on the diagnostic</span></div>
+        <div class="fit-item"><span class="fit-check yes">✓</span><span>Your pipeline feels inconsistent, not broken</span></div>
+        <div class="fit-item"><span class="fit-check yes">✓</span><span>You want the constraint named before you commit to a system</span></div>
+        <div class="fit-item"><span class="fit-check yes">✓</span><span>$29 is not the issue. Clarity is.</span></div>
+      </div>
+
+      <div class="fit-col" style="background:var(--sf2);">
+        <div class="kicker" style="color:var(--ember);margin-bottom:16px;">THIS IS NOT FOR YOU IF:</div>
+        <div class="fit-item"><span class="fit-check no">✕</span><span>You want a generic ICP template</span></div>
+        <div class="fit-item"><span class="fit-check no">✕</span><span>You scored below 30 (the foundation needs different work first)</span></div>
+        <div class="fit-item"><span class="fit-check no">✕</span><span>You are not willing to act on what you find</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 4 — PRIMARY CTA
+══════════════════════════════ -->
+<section class="section" style="background:var(--sf);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);">
+  <div class="inner">
+    <div style="max-width:480px;margin:0 auto;text-align:center;">
+      <div class="gold-bar" style="margin-bottom:36px;"></div>
+
+      <div style="font-family:var(--F);font-size:96px;color:var(--gold);line-height:1;letter-spacing:.02em;margin-bottom:4px;">$29</div>
+      <div class="mono" style="font-size:10px;letter-spacing:.16em;margin-bottom:32px;">ONE-TIME · INSTANT DELIVERY · NO SUBSCRIPTION</div>
+
+      <button class="btn-fire" onclick="goToCheckout()" style="margin-bottom:16px;">
+        <span data-btn-label>GET MY SIGNAL CORRECTION REPORT →</span>
+      </button>
+
+      <p class="mono" style="font-size:9px;color:var(--dim);line-height:1.7;letter-spacing:.1em;">
+        30-DAY SIGNAL GUARANTEE — IF YOUR DB2 DOES NOT RECEIVE 15 SIGNALS IN 30 DAYS, WE REFUND. NO QUESTIONS.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 5 — OBJECTION HANDLER
+══════════════════════════════ -->
+<section class="section">
+  <div class="inner">
+
+    <div class="kicker" style="margin-bottom:24px;">COMMON QUESTIONS</div>
+
+    <div class="obj-row">
+      <div class="obj-q">What format is the report?</div>
+      <p class="body-text" style="font-size:14px;">PDF. 5–7 pages. Delivered to your inbox within 2 minutes of purchase. Built from your diagnostic data.</p>
+    </div>
+
+    <div class="obj-row">
+      <div class="obj-q">Is this the same for everyone?</div>
+      <p class="body-text" style="font-size:14px;">No. Your report is generated from your session data — your score, your archetype, your bottleneck. The constraint named is specific to what your answers revealed.</p>
+    </div>
+
+    <div class="obj-row">
+      <div class="obj-q">What if I want more than the report?</div>
+      <p class="body-text" style="font-size:14px;">The ICP Intelligence System is the next layer. The report tells you what to fix. The system fixes it and keeps it fixed. $497/month.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 6 — FINAL CTA
+══════════════════════════════ -->
+<section class="section" style="background:var(--sf);border-top:1px solid var(--brd);">
+  <div class="inner" style="text-align:center;">
+    <div style="max-width:480px;margin:0 auto;">
+
+      <div class="kicker" style="margin-bottom:24px;">READY TO SEE YOUR CONSTRAINT?</div>
+
+      <button class="btn-fire" onclick="goToCheckout()" style="margin-bottom:20px;">
+        <span data-btn-label>GET MY SIGNAL CORRECTION REPORT →</span>
+      </button>
+
+      <div>
+        <a href="javascript:history.back()" class="btn-line" style="margin:0 auto;">← Back to my results</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
