@@ -415,7 +415,9 @@ function renderQuestion() {
   var qText = q.question || q.questionText || '';
   var opts = q.options || [];
 
-  document.getElementById('question-card').innerHTML =
+  var qCard = document.getElementById('question-card');
+  if (!qCard) { console.error('question-card not found in DOM'); return; }
+  qCard.innerHTML =
     '<div class="card glow" style="padding:0;">'
     + '<div class="gold-bar"></div>'
     + '<div style="padding:36px 36px 32px;">'
