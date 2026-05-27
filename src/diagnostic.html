@@ -901,13 +901,14 @@ function animateCount(id, from, to, duration) {
 
 function renderLoading() {
   var screen = state.screen;
-  var target = document.getElementById('screen-' + (screen === 'game' ? 'game' : screen));
-  var inner = target ? target.querySelector('[id$="-content"], [style*="max-width:640px"]') : null;
-  if (inner) inner.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
-  else {
+  if (screen === 'game') {
     var qc = document.getElementById('question-card');
     if (qc) qc.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
+    return;
   }
+  var target = document.getElementById('screen-' + screen);
+  var inner = target ? target.querySelector('[id$="-content"]') : null;
+  if (inner) inner.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;"><div style="width:20px;height:20px;border:2px solid var(--brd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;"></div><span class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;">Processing</span></div>';
 }
 
 function renderError(msg, retry) {
