@@ -225,9 +225,6 @@ function $id(id) {
   }
   return el;
 }
-console.log('Document ready, body exists:', !!document.body);
-console.log('question-card via querySelector:', !!document.querySelector('#question-card'));
-console.log('question-card via getElementById:', !!document.getElementById('question-card'));
 
 // ═══════════════════════════════════════
 // CONFIG
@@ -363,12 +360,7 @@ async function handleFrameSelect(frameId) {
       config: { categories: ['icp','positioning','activation','conversion','pricing','dark_funnel','strategy','onboarding','offer'], difficulty: 'Starter', questionCount: 9, entryFrameId: frameId, entryFrameSource: 'explicit_selection', entryFrameConfidence: 'high' },
       context: { attribution: {} },
     });
-    console.log('Raw data:', JSON.stringify(data).slice(0,500));
-    console.log('data.data:', data.data);
-    console.log('questions:', data.questions || (data.data && data.data.questions));
     var d = data.data || data;
-    console.log('d.session:', d.session);
-    console.log('d.questions:', d.questions);
     state.session = d.session;
     state.questions = d.questions;
     state.questionAssignments = d.questionAssignments || [];
@@ -376,18 +368,11 @@ async function handleFrameSelect(frameId) {
     state.answers = [];
     state.startTime = Date.now();
     state.qStartTime = Date.now();
-    console.log('About to renderQuestion, questions count:', state.questions.length);
     setTimeout(function() {
-      console.log('screen-game display:', document.getElementById('screen-game') ? window.getComputedStyle(document.getElementById('screen-game')).display : 'element not found');
-      console.log('question-card exists:', !!document.getElementById('question-card'));
       try {
         renderQuestion();
-        console.log('renderQuestion done');
         startTimer();
-        console.log('startTimer done');
-      } catch(renderErr) {
-        console.error('Render failed:', renderErr.message, renderErr.stack);
-      }
+      } catch(renderErr) {}
     }, 300);
   } catch(err) {
     renderError('Could not start diagnostic. Please try again.', function() { handleFrameSelect(frameId); });
@@ -432,7 +417,7 @@ function renderQuestion() {
   var opts = q.options || [];
 
   var qCard = document.getElementById('question-card');
-  if (!qCard) { console.error('question-card not found in DOM'); return; }
+  if (!qCard) return;
   qCard.innerHTML =
     '<div class="card glow" style="padding:0;">'
     + '<div class="gold-bar"></div>'
@@ -922,8 +907,6 @@ function renderError(msg, retry) {
 }
 
 async function apiCall(url, body) {
-  console.log('Calling:', url);
-  try {
   var res = await fetch(url, {
     method: 'POST',
     mode: 'cors',
@@ -934,13 +917,8 @@ async function apiCall(url, body) {
     },
     body: JSON.stringify(body)
   });
-  console.log('Response status:', res.status);
   if (!res.ok) throw new Error('API error: ' + res.status);
   return res.json();
-  } catch(e) {
-    console.error('API call failed:', e.message, url);
-    throw e;
-  }
 }
 
 // ═══════════════════════════════════════
