@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purchase Confirmed — Signal Resolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080706;--sf:#0f0e0c;--sf2:#161410;--sf3:#1d1a15;
+  --brd:rgba(255,200,80,0.07);--brdH:rgba(255,200,80,0.18);
+  --gold:#f5a623;--goldH:#ffd166;--goldD:rgba(245,166,35,0.35);
+  --ember:#ff6b35;--slate:#c8c4bb;--muted:#6e6860;--dim:#3a3530;
+  --text:#ede8df;--white:#f7f3ec;
+  --F:'Bebas Neue',sans-serif;
+  --S:'Fraunces',serif;
+  --M:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--S);overflow-x:hidden;min-height:100vh;}
+button,a{font-family:inherit;cursor:pointer;}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+.fade-up{animation:fadeUp .5s ease both;}
+.fade-in{animation:fadeIn .6s ease both;}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:rgba(8,7,6,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);}
+.nav-logo{font-family:var(--F);font-size:18px;letter-spacing:.12em;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:10px;}
+.nav-logo .sigil{color:var(--gold);font-size:22px;}
+.nav-right{font-family:var(--M);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);}
+
+/* Shared */
+.gold-bar{height:3px;width:100%;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+.kicker{font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--gold);}
+.headline{font-family:var(--F);line-height:.92;letter-spacing:.02em;color:var(--white);margin:0;}
+.body-text{font-family:var(--S);font-style:italic;font-size:15px;color:var(--slate);line-height:1.7;}
+.mono{font-family:var(--M);font-size:11px;color:var(--muted);letter-spacing:.06em;}
+
+/* Buttons */
+.btn-fire{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--gold);color:var(--bg);font-family:var(--M);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:16px 32px;border:none;text-decoration:none;transition:all .25s;}
+.btn-fire:hover{box-shadow:0 0 50px rgba(245,166,35,.4);transform:translateY(-2px);}
+.btn-line{font-family:var(--M);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--brd);padding:12px 24px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;}
+.btn-line:hover{color:var(--gold);border-color:rgba(245,166,35,.22);}
+
+/* Ambient */
+.orb-a{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07),transparent 70%);top:-100px;right:-150px;filter:blur(40px);pointer-events:none;}
+.orb-b{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.05),transparent 70%);bottom:-80px;left:-80px;filter:blur(60px);pointer-events:none;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.025) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,black,transparent);pointer-events:none;}
+
+/* Step cards */
+.step-card{background:var(--sf);border:1px solid var(--brd);padding:24px 28px;position:relative;overflow:hidden;transition:border-color .25s;}
+.step-card:hover{border-color:var(--brdH);}
+.step-num{font-family:var(--F);font-size:48px;color:rgba(245,166,35,.12);position:absolute;top:12px;right:16px;line-height:1;pointer-events:none;}
+
+/* Feature cards */
+.feat-card{background:var(--sf2);border:1px solid var(--brd);padding:28px 24px;transition:border-color .25s;}
+.feat-card:hover{border-color:var(--brdH);}
+
+/* Responsive */
+@media(max-width:640px){
+  .nav{padding:16px 20px;}
+  .steps-grid{grid-template-columns:1fr !important;}
+  .feat-grid{grid-template-columns:1fr !important;}
+  .cta-row{flex-direction:column !important;align-items:stretch !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo"><span class="sigil">◆</span> SIGNAL RESOLUTION</a>
+  <span class="nav-right">PURCHASE CONFIRMED</span>
+</nav>
+
+<!-- ══════════════════════════════
+     SECTION 1 — CONFIRMATION HEADER
+══════════════════════════════ -->
+<section style="position:relative;overflow:hidden;padding:120px 24px 80px;text-align:center;">
+  <div class="orb-a"></div>
+  <div class="orb-b"></div>
+  <div class="grid-bg"></div>
+
+  <div style="position:relative;z-index:2;max-width:720px;margin:0 auto;">
+
+    <div class="eyebrow fade-up" style="justify-content:center;margin-bottom:24px;">PURCHASE CONFIRMED</div>
+
+    <h1 class="headline fade-up" style="font-size:clamp(44px,7vw,96px);margin-bottom:28px;animation-delay:.1s;">
+      YOUR SIGNAL CORRECTION<br><span style="color:var(--gold);">REPORT IS BEING BUILT</span>
+    </h1>
+
+    <p class="body-text fade-up" style="max-width:500px;margin:0 auto 40px;font-size:clamp(15px,1.6vw,18px);animation-delay:.2s;">
+      Personalized to your diagnostic result. Check your inbox — it arrives within 2 minutes.
+    </p>
+
+    <!-- Pulse indicator -->
+    <div class="fade-up" style="display:inline-flex;align-items:center;gap:12px;padding:10px 20px;border:1px solid var(--brd);background:var(--sf);animation-delay:.3s;">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2.4s ease-in-out infinite;flex-shrink:0;"></span>
+      <span class="mono" style="font-size:10px;letter-spacing:.2em;color:var(--gold);">GENERATING YOUR REPORT...</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 2 — WHAT HAPPENS NEXT
+══════════════════════════════ -->
+<section style="padding:0 24px 80px;">
+  <div style="max-width:840px;margin:0 auto;">
+
+    <div class="kicker" style="margin-bottom:16px;text-align:center;">WHAT HAPPENS NEXT</div>
+
+    <div class="steps-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;">
+
+      <div class="step-card fade-up" style="animation-delay:.1s;">
+        <div class="step-num">1</div>
+        <div class="gold-bar" style="margin:-24px -28px 20px;width:calc(100% + 56px);"></div>
+        <div class="kicker" style="color:var(--gold);">CHECK YOUR INBOX</div>
+        <p class="body-text" style="font-size:13px;">Your personalized report will arrive within 2 minutes. Check spam if you don't see it.</p>
+      </div>
+
+      <div class="step-card fade-up" style="animation-delay:.18s;">
+        <div class="step-num">2</div>
+        <div class="gold-bar" style="margin:-24px -28px 20px;width:calc(100% + 56px);"></div>
+        <div class="kicker" style="color:var(--gold);">READ SECTION 1 FIRST</div>
+        <p class="body-text" style="font-size:13px;">Your primary bottleneck is named on page 1. That's the only thing that matters right now.</p>
+      </div>
+
+      <div class="step-card fade-up" style="animation-delay:.26s;">
+        <div class="step-num">3</div>
+        <div class="gold-bar" style="margin:-24px -28px 20px;width:calc(100% + 56px);"></div>
+        <div class="kicker" style="color:var(--gold);">COME BACK HERE AFTER</div>
+        <p class="body-text" style="font-size:13px;">The next move is waiting below this line.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 3 — T1 SOFT PITCH
+     (fades in after 8s delay)
+══════════════════════════════ -->
+<section id="pitch-section" style="padding:0 24px 80px;opacity:0;transition:opacity .8s ease;">
+  <div style="max-width:640px;margin:0 auto;">
+    <div style="background:rgba(245,166,35,.05);border:1px solid var(--brdH);padding:40px 36px;position:relative;overflow:hidden;">
+      <div class="gold-bar" style="position:absolute;top:0;left:0;right:0;margin:0;width:100%;"></div>
+
+      <div class="kicker" style="margin-top:8px;">WHILE YOU WAIT</div>
+      <h2 class="headline" style="font-size:clamp(28px,4vw,52px);margin-bottom:20px;">
+        THE REPORT NAMES<br>THE BOTTLENECK.<br><span style="color:var(--gold);">THE SYSTEM FIXES IT.</span>
+      </h2>
+      <p class="body-text" style="margin-bottom:32px;max-width:480px;">
+        The Signal Correction Report shows you exactly where your GTM signal is breaking down. The ICP Intelligence System is what you run after you know. $497/month. No application. Direct access.
+      </p>
+
+      <div class="cta-row" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <a href="https://signalresolution.com/pricing" class="btn-fire">START THE SYSTEM — $497/MO →</a>
+        <a href="#what-you-get" class="btn-line">SEE EXACTLY WHAT YOU GET →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 4 — WHAT T1 INCLUDES
+══════════════════════════════ -->
+<section id="what-you-get" style="padding:0 24px 80px;">
+  <div style="max-width:840px;margin:0 auto;">
+
+    <div class="kicker" style="margin-bottom:6px;text-align:center;">WHAT YOU GET IN TIER 1</div>
+    <div style="text-align:center;margin-bottom:28px;">
+      <span class="mono" style="font-size:10px;color:var(--dim);">$497/MONTH · UNLIMITED SEATS · DIRECT ACCESS</span>
+    </div>
+
+    <div class="feat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;">
+
+      <div class="feat-card">
+        <div style="width:32px;height:32px;border:1px solid var(--brdH);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <span style="font-family:var(--F);font-size:18px;color:var(--gold);">◈</span>
+        </div>
+        <div class="kicker">NOTION INTELLIGENCE WORKSPACE</div>
+        <p class="body-text" style="font-size:13px;">Six-database buyer signal system. Pre-populated from your diagnostic result on day one.</p>
+      </div>
+
+      <div class="feat-card">
+        <div style="width:32px;height:32px;border:1px solid var(--brdH);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <span style="font-family:var(--F);font-size:18px;color:var(--gold);">⟐</span>
+        </div>
+        <div class="kicker">WEEKLY SIGNAL PIPELINE</div>
+        <p class="body-text" style="font-size:13px;">88-source retrieval system surfaces buyer-ready signals every 7 days. No manual research.</p>
+      </div>
+
+      <div class="feat-card">
+        <div style="width:32px;height:32px;border:1px solid var(--brdH);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <span style="font-family:var(--F);font-size:18px;color:var(--gold);">◎</span>
+        </div>
+        <div class="kicker">ICP CLARITY FOUNDATION</div>
+        <p class="body-text" style="font-size:13px;">Firmographic gate, psychographic resolution, behavioral timing. The four-layer system your diagnostic just scored.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 5 — GUARANTEE
+══════════════════════════════ -->
+<section style="padding:0 24px 100px;text-align:center;">
+  <div style="max-width:640px;margin:0 auto;border-top:1px solid var(--brd);padding-top:40px;">
+    <span class="mono" style="font-size:10px;color:var(--dim);line-height:1.8;display:block;letter-spacing:.12em;">
+      30-DAY SIGNAL GUARANTEE — IF YOUR NOTION WORKSPACE DOES NOT RECEIVE 15 SIGNALS IN 30 DAYS, WE REFUND. NO QUESTIONS.
+    </span>
+  </div>
+</section>
+
+<script>
+// Fade in pitch section after 8 seconds
+setTimeout(function() {
+  var pitch = document.getElementById('pitch-section');
+  if (pitch) pitch.style.opacity = '1';
+}, 8000);
+</script>
+
+</body>
+</html>
