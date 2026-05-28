@@ -571,6 +571,9 @@ function renderResultsGated() {
   var bid = r.primaryBottleneckId || '';
   var bData = BOTTLENECK_COPY[bid] || { title: 'Primary Constraint', body: '' };
   var band = scoreBand(pct);
+  var pathway = r.commercialPathwayId || '';
+  var readiness = r.readinessId || '';
+  var isPathA = (pathway === 'pathway_nurture_fallback') || (pathway === 'pathway_icp_clarity' && readiness === 'readiness_exploratory');
 
   var container = document.getElementById('results-content');
   if (!container) return;
@@ -596,27 +599,38 @@ function renderResultsGated() {
     + '<div class="kicker">RESOLUTION PATHWAY</div>'
     + '<div style="font-family:var(--F);font-size:18px;color:var(--gold);text-transform:capitalize;">' + esc(pathwayLabel || 'ICP Clarity') + '</div></div>'
     + '</div>'
-    // Blurred preview of full report
-    + '<div style="position:relative;margin-bottom:2px;" class="fade-up" style="animation-delay:.2s;">'
-    + '<div style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.45;">'
-    + cats.slice(0,5).map(function(c) {
-        return '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--brd);background:var(--sf);margin-bottom:2px;">'
-          + '<span class="mono" style="font-size:10px;width:120px;flex-shrink:0;">' + esc(CAT_LABELS[c.id] || c.id) + '</span>'
-          + '<div class="cat-bar" style="flex:1;"><div class="cat-bar-fill" style="width:' + (c.pct||0) + '%;background:var(--gold);"></div></div>'
-          + '<span class="mono" style="font-size:10px;width:32px;text-align:right;">' + (c.pct||0) + '%</span>'
-          + '</div>';
-      }).join('')
-    + '</div>'
-    + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent,var(--bg) 80%);">'
-    + '<div style="text-align:center;padding:20px;">'
-    + '<div class="kicker" style="margin-bottom:8px;">YOUR FULL REPORT IS READY</div>'
-    + '<p class="body-text" style="font-size:13px;margin-bottom:16px;">Category breakdown, detected patterns, and your personalised next move — all unlocked with your email.</p>'
-    + '<button class="btn-fire" onclick="showLeadCapture()">UNLOCK MY FULL REPORT →</button>'
-    + '</div></div></div>'
-    // CTA anchor
-    + '<div style="text-align:center;padding:20px 0;" class="fade-up">'
-    + '<button class="btn-line" onclick="showLeadCapture()">UNLOCK YOUR FULL REPORT →</button>'
-    + '</div>';
+    + (isPathA
+      ? '<div style="margin-top:48px;padding:32px;background:var(--sf);border:1px solid var(--brd);border-left:4px solid var(--gold);">'
+        + '<div style="font-family:var(--M);font-size:10px;letter-spacing:.14em;color:var(--gold);margin-bottom:12px;">SIGNAL INSIGHT</div>'
+        + '<div style="font-family:var(--F);font-size:clamp(20px,3vw,26px);color:var(--white);margin-bottom:16px;line-height:1.1;">YOUR ' + (archLabel || 'SIGNAL') + ' PROFILE REVEALS A FOUNDATION GAP.</div>'
+        + '<p style="font-family:var(--S);font-style:italic;font-size:16px;color:var(--slate);line-height:1.7;margin-bottom:24px;">Most founders at your score range have the motion right but the signal layer missing. Before the system can help you, you need to understand what the signal gap actually is.</p>'
+        + '<div style="margin-bottom:24px;padding:20px;background:var(--sf2);border:1px solid var(--brd);">'
+        + '<div style="font-family:var(--M);font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:8px;">PRESCRIBED NEXT STEP</div>'
+        + '<div style="font-family:var(--F);font-size:18px;color:var(--white);margin-bottom:8px;">READ: THE SIGNAL GAP</div>'
+        + '<div style="font-family:var(--S);font-size:14px;color:var(--slate);">Why Your Best-Fit Buyers Cannot Find You — a free framework that maps exactly what your diagnostic revealed.</div>'
+        + '</div>'
+        + '<a href="/godfather.html?archetype=' + encodeURIComponent(archLabel || '') + '&bottleneck=' + encodeURIComponent(bid || '') + '" style="display:block;background:var(--gold);color:#000;text-align:center;padding:16px 24px;font-family:var(--M);font-size:11px;letter-spacing:.12em;font-weight:600;text-decoration:none;">GET THE FREE FRAMEWORK →</a>'
+        + '<p style="font-family:var(--M);font-size:9px;color:var(--muted);text-align:center;margin-top:12px;letter-spacing:.08em;">FREE. NO CREDIT CARD. DELIVERED INSTANTLY.</p>'
+        + '</div>'
+      : '<div style="position:relative;margin-bottom:2px;" class="fade-up" style="animation-delay:.2s;">'
+        + '<div style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.45;">'
+        + cats.slice(0,5).map(function(c) {
+            return '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--brd);background:var(--sf);margin-bottom:2px;">'
+              + '<span class="mono" style="font-size:10px;width:120px;flex-shrink:0;">' + esc(CAT_LABELS[c.id] || c.id) + '</span>'
+              + '<div class="cat-bar" style="flex:1;"><div class="cat-bar-fill" style="width:' + (c.pct||0) + '%;background:var(--gold);"></div></div>'
+              + '<span class="mono" style="font-size:10px;width:32px;text-align:right;">' + (c.pct||0) + '%</span>'
+              + '</div>';
+          }).join('')
+        + '</div>'
+        + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent,var(--bg) 80%);">'
+        + '<div style="text-align:center;padding:20px;">'
+        + '<div class="kicker" style="margin-bottom:8px;">YOUR FULL REPORT IS READY</div>'
+        + '<p class="body-text" style="font-size:13px;margin-bottom:16px;">Category breakdown, detected patterns, and your personalised next move — all unlocked with your email.</p>'
+        + '<button class="btn-fire" onclick="showLeadCapture()">UNLOCK MY FULL REPORT →</button>'
+        + '</div></div></div>'
+        + '<div style="text-align:center;padding:20px 0;" class="fade-up">'
+        + '<button class="btn-line" onclick="showLeadCapture()">UNLOCK YOUR FULL REPORT →</button>'
+        + '</div>');
 
   // Animate score count
   setTimeout(function() { animateCount('score-num', 0, pct, 1200); }, 300);
