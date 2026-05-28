@@ -14,6 +14,8 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.ignores.add("src/tripwire.html");
   eleventyConfig.addPassthroughCopy("src/godfather.html");
   eleventyConfig.ignores.add("src/godfather.html");
+  eleventyConfig.addPassthroughCopy("src/apply.html");
+  eleventyConfig.ignores.add("src/apply.html");
 
 
   // ── FILTERS ────────────────────────────────────────────────────────────────

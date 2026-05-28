@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply — ICP Intelligence System | Signal Resolution</title>
+<meta name="description" content="Apply for T2 Done-With-You access. 12 client cap. $2,997/month. Rome reviews every application personally within 48 hours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080706;--sf:#0f0e0c;--sf2:#161410;--sf3:#1d1a15;
+  --brd:rgba(255,200,80,0.07);--brdH:rgba(255,200,80,0.18);
+  --gold:#f5a623;--goldH:#ffd166;--ember:#ff6b35;
+  --slate:#c8c4bb;--muted:#6e6860;--dim:#3a3530;
+  --text:#ede8df;--white:#f7f3ec;
+  --F:'Bebas Neue',sans-serif;
+  --S:'Fraunces',serif;
+  --M:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--S);overflow-x:hidden;min-height:100vh;}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-up{animation:fadeUp .5s ease both;}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;padding:20px 40px;background:rgba(8,7,6,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);}
+.nav-logo{font-family:var(--F);font-size:18px;letter-spacing:.12em;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:10px;}
+.nav-logo .sigil{display:flex;align-items:center;}
+.nav-logo .sigil svg{animation:spin 28s linear infinite;}
+
+/* Typography */
+.kicker{font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.gold-bar{height:3px;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+
+/* Form elements */
+label{display:block;font-family:var(--M);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:20px;}
+label:first-of-type{margin-top:0;}
+input[type="text"],
+input[type="email"],
+select,
+textarea{
+  font-family:var(--M);background:var(--sf2);border:1px solid var(--brd);
+  color:var(--white);padding:14px 16px;width:100%;font-size:13px;
+  letter-spacing:.04em;outline:none;transition:border-color .2s;display:block;
+  appearance:none;-webkit-appearance:none;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+select:focus,
+textarea:focus{border-color:var(--gold);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6860' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+select option{background:var(--sf2);color:var(--white);}
+textarea{resize:vertical;min-height:80px;}
+.field-error{font-family:var(--M);font-size:10px;color:var(--ember);margin-top:5px;display:none;}
+
+/* Submit button */
+.btn-submit{display:block;width:100%;background:var(--gold);color:#000;font-family:var(--M);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:18px 32px;border:none;cursor:pointer;transition:all .2s;margin-top:24px;}
+.btn-submit:hover{background:var(--goldH);}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+
+/* Feature cards */
+.feat-card{background:var(--sf2);border:1px solid var(--brd);padding:28px 24px;transition:border-color .25s;}
+.feat-card:hover{border-color:var(--brdH);}
+
+/* Ambient orbs */
+.orb-a{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.06),transparent 70%);top:-80px;right:-120px;filter:blur(40px);pointer-events:none;}
+.orb-b{position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.04),transparent 70%);bottom:-60px;left:-80px;filter:blur(60px);pointer-events:none;}
+
+@media(max-width:640px){
+  .nav{padding:16px 20px;}
+  section{padding-left:20px !important;padding-right:20px !important;}
+  .feat-grid{grid-template-columns:1fr !important;}
+  input[type="text"],input[type="email"],select,textarea{font-size:16px;}
+  .btn-submit{font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <span class="sigil"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#f5a623" stroke-width="1"/><circle cx="11" cy="11" r="6" stroke="#f5a623" stroke-width=".5" stroke-dasharray="2 2"/><circle cx="11" cy="11" r="2" fill="#f5a623"/></svg></span>
+    SIGNAL RESOLUTION
+  </a>
+</nav>
+
+<!-- ══════════════════════════════
+     SECTION 1 — HEADER
+══════════════════════════════ -->
+<section style="position:relative;overflow:hidden;padding:140px 24px 72px;text-align:center;">
+  <div class="orb-a"></div>
+  <div class="orb-b"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.02) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,black,transparent);pointer-events:none;"></div>
+
+  <div style="position:relative;z-index:2;max-width:680px;margin:0 auto;">
+    <div class="kicker fade-up">TIER 2 — DONE WITH YOU</div>
+    <h1 style="font-family:var(--F);font-size:clamp(36px,6vw,80px);line-height:.92;letter-spacing:.02em;color:var(--white);margin-bottom:24px;" class="fade-up" style="animation-delay:.1s;">
+      THE ICP INTELLIGENCE SYSTEM<br><span style="color:var(--gold);">APPLICATION</span>
+    </h1>
+    <p style="font-family:var(--S);font-style:italic;font-size:clamp(15px,1.6vw,18px);color:var(--slate);line-height:1.7;max-width:480px;margin:0 auto;" class="fade-up" style="animation-delay:.2s;">
+      12 client cap. $2,997/month. Rome reviews every application personally within 48 hours.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 2 — APPLICATION FORM
+══════════════════════════════ -->
+<section style="padding:0 24px 80px;">
+  <div style="max-width:600px;margin:0 auto;">
+
+    <!-- Thank-you state -->
+    <div id="thankyou-state" style="display:none;text-align:center;padding:60px 40px;background:var(--sf);border:1px solid var(--brdH);" class="fade-up">
+      <div class="gold-bar" style="margin:-60px -40px 40px;"></div>
+      <div class="kicker" style="justify-content:center;margin-bottom:20px;">APPLICATION RECEIVED</div>
+      <div style="font-family:var(--F);font-size:clamp(32px,5vw,56px);color:var(--white);line-height:.92;letter-spacing:.02em;margin-bottom:20px;">
+        YOUR APPLICATION IS IN.<br><span style="color:var(--gold);">ROME WILL REVIEW IT PERSONALLY.</span>
+      </div>
+      <p style="font-family:var(--S);font-style:italic;font-size:16px;color:var(--slate);line-height:1.7;max-width:400px;margin:0 auto;">
+        Expect a response within 48 hours. Check your inbox — including spam.
+      </p>
+    </div>
+
+    <!-- Form state -->
+    <div id="form-state">
+      <div style="background:var(--sf);border:1px solid var(--brd);position:relative;overflow:hidden;">
+        <div class="gold-bar"></div>
+        <div style="padding:36px 40px;">
+
+          <div class="kicker" style="margin-bottom:24px;">YOUR APPLICATION</div>
+
+          <form id="apply-form" novalidate>
+
+            <label for="f-name">Full name</label>
+            <input type="text" id="f-name" placeholder="Your full name" autocomplete="name">
+            <div class="field-error" id="err-name">Please enter your name.</div>
+
+            <label for="f-email">Email</label>
+            <input type="email" id="f-email" placeholder="your@company.com" autocomplete="email">
+            <div class="field-error" id="err-email">Please enter a valid email address.</div>
+
+            <label for="f-company">Company name</label>
+            <input type="text" id="f-company" placeholder="Your company" autocomplete="organization">
+            <div class="field-error" id="err-company">Please enter your company name.</div>
+
+            <label for="f-arr">Current ARR</label>
+            <select id="f-arr">
+              <option value="" disabled selected>Select your ARR range</option>
+              <option value="Under $500K">Under $500K</option>
+              <option value="$500K-$1M">$500K–$1M</option>
+              <option value="$1M-$2M">$1M–$2M</option>
+              <option value="$2M-$5M">$2M–$5M</option>
+              <option value="Over $5M">Over $5M</option>
+            </select>
+            <div class="field-error" id="err-arr">Please select your ARR range.</div>
+
+            <label for="f-bottleneck">Primary GTM bottleneck</label>
+            <input type="text" id="f-bottleneck" placeholder="What does your diagnostic say is your primary constraint?">
+            <div class="field-error" id="err-bottleneck">Please describe your primary constraint.</div>
+
+            <label for="f-tried">What have you already tried to fix this?</label>
+            <textarea id="f-tried" rows="3" placeholder="What have you already tried to fix this?"></textarea>
+            <div class="field-error" id="err-tried">Please describe what you have already tried.</div>
+
+            <label for="f-whynow">Why is this the right moment?</label>
+            <textarea id="f-whynow" rows="3" placeholder="What changed that makes this the right moment?"></textarea>
+            <div class="field-error" id="err-whynow">Please describe why now is the right moment.</div>
+
+            <button type="submit" class="btn-submit" id="submit-btn">SUBMIT MY APPLICATION →</button>
+            <div class="field-error" id="err-global" style="text-align:center;margin-top:12px;font-size:11px;"></div>
+
+          </form>
+
+          <p style="font-family:var(--M);font-size:9px;color:var(--muted);text-align:center;margin-top:16px;letter-spacing:.08em;line-height:1.7;">
+            You will receive a response within 48 hours.<br>If accepted, onboarding begins within 7 days.
+          </p>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 3 — WHAT T2 INCLUDES
+══════════════════════════════ -->
+<section style="padding:0 24px 80px;">
+  <div style="max-width:840px;margin:0 auto;">
+
+    <div class="kicker" style="text-align:center;margin-bottom:28px;">WHAT YOU GET AT TIER 2</div>
+
+    <div class="feat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;">
+
+      <div class="feat-card">
+        <div style="width:32px;height:32px;border:1px solid var(--brdH);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <span style="font-family:var(--F);font-size:18px;color:var(--gold);">◈</span>
+        </div>
+        <div class="kicker">3 BUYER AVATAR PROFILES</div>
+        <p style="font-family:var(--S);font-style:italic;font-size:14px;color:var(--slate);line-height:1.65;">Built from your diagnostic session. Not templates. Derived from your actual answers and archetype resolution.</p>
+      </div>
+
+      <div class="feat-card">
+        <div style="width:32px;height:32px;border:1px solid var(--brdH);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <span style="font-family:var(--F);font-size:18px;color:var(--gold);">⟐</span>
+        </div>
+        <div class="kicker">50-SIGNAL NOTION WORKSPACE</div>
+        <p style="font-family:var(--S);font-style:italic;font-size:14px;color:var(--slate);line-height:1.65;">Pre-populated from your bottleneck and archetype on day one. Your team starts with context not a blank canvas.</p>
+      </div>
+
+      <div class="feat-card">
+        <div style="width:32px;height:32px;border:1px solid var(--brdH);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <span style="font-family:var(--F);font-size:18px;color:var(--gold);">◎</span>
+        </div>
+        <div class="kicker">WEEKLY SIGNAL PIPELINE</div>
+        <p style="font-family:var(--S);font-style:italic;font-size:14px;color:var(--slate);line-height:1.65;">88-source retrieval system surfaces buyer-ready accounts every 7 days. DWY means Rome works alongside you as it builds.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     SECTION 4 — GUARANTEE
+══════════════════════════════ -->
+<section style="padding:0 24px 100px;text-align:center;">
+  <div style="max-width:640px;margin:0 auto;border-top:1px solid var(--brd);padding-top:40px;">
+    <span style="font-family:var(--M);font-size:10px;color:var(--dim);line-height:1.8;display:block;letter-spacing:.12em;">
+      90-DAY SIGNAL GUARANTEE — IF YOUR WORKSPACE DOES NOT RECEIVE 50 SIGNALS IN 90 DAYS WE EXTEND YOUR ENGAGEMENT AT NO CHARGE.
+    </span>
+  </div>
+</section>
+
+<script>
+(function() {
+
+  var BREVO_API_KEY = '';
+
+  var form     = document.getElementById('apply-form');
+  var submitBtn = document.getElementById('submit-btn');
+
+  function val(id) { return document.getElementById(id).value.trim(); }
+  function showErr(id, show) {
+    document.getElementById(id).style.display = show ? 'block' : 'none';
+  }
+  function clearErrors() {
+    ['err-name','err-email','err-company','err-arr','err-bottleneck','err-tried','err-whynow','err-global']
+      .forEach(function(id) { showErr(id, false); });
+  }
+
+  function validate() {
+    var ok = true;
+    if (!val('f-name'))                               { showErr('err-name', true);       ok = false; }
+    var e = val('f-email');
+    if (!e || !e.includes('@') || !e.includes('.'))   { showErr('err-email', true);      ok = false; }
+    if (!val('f-company'))                            { showErr('err-company', true);    ok = false; }
+    if (!val('f-arr'))                                { showErr('err-arr', true);        ok = false; }
+    if (!val('f-bottleneck'))                         { showErr('err-bottleneck', true); ok = false; }
+    if (!val('f-tried'))                              { showErr('err-tried', true);      ok = false; }
+    if (!val('f-whynow'))                             { showErr('err-whynow', true);     ok = false; }
+    return ok;
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    clearErrors();
+    if (!validate()) {
+      var first = form.querySelector('[style*="block"]');
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    submitBtn.textContent = 'SUBMITTING...';
+    submitBtn.disabled = true;
+
+    var payload = {
+      email: val('f-email'),
+      attributes: {
+        FIRSTNAME:          val('f-name'),
+        COMPANY:            val('f-company'),
+        ARR_RANGE:          val('f-arr'),
+        BOTTLENECK_NOTES:   val('f-bottleneck'),
+        APPLICATION_STATUS: 'pending'
+      },
+      listIds: [12],
+      updateEnabled: true
+    };
+
+    try {
+      var resp = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'api-key': BREVO_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!resp.ok && resp.status !== 204) {
+        var err = await resp.json().catch(function() { return {}; });
+        throw new Error(err.message || 'API error ' + resp.status);
+      }
+
+      document.getElementById('form-state').style.display = 'none';
+      var ty = document.getElementById('thankyou-state');
+      ty.style.display = 'block';
+      window.scrollTo({ top: ty.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+
+    } catch(err) {
+      submitBtn.textContent = 'SUBMIT MY APPLICATION →';
+      submitBtn.disabled = false;
+      var g = document.getElementById('err-global');
+      g.textContent = 'Something went wrong. Please try again or email rome@signalresolution.com directly.';
+      g.style.display = 'block';
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
