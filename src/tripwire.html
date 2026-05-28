@@ -105,7 +105,8 @@ function goToCheckout() {
     '?checkout[custom][session_id]=' + encodeURIComponent(params.get('session_id') || '') +
     '&checkout[custom][archetype]=' + encodeURIComponent(archetype) +
     '&checkout[custom][bottleneck]=' + encodeURIComponent(bottleneck) +
-    '&checkout[email]=' + encodeURIComponent(params.get('email') || '');
+    '&checkout[email]=' + encodeURIComponent(params.get('email') || '') +
+    '&checkout[redirect_url]=' + encodeURIComponent('https://signalresolution.com/thank-you.html');
 }
 
 // Inject dynamic text once DOM is ready
