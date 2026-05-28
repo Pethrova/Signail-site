@@ -328,6 +328,22 @@ function showScreen(name) {
   window.scrollTo(0, 0);
 }
 
+var exitIntentFired = false;
+function checkExitIntent() {
+  if (exitIntentFired) return;
+  if (state.screen !== 'system') return;
+  exitIntentFired = true;
+  var banner = document.createElement('div');
+  banner.id = 'exit-intent-banner';
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#0f0e0c;border-top:2px solid var(--gold);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;z-index:999;';
+  banner.innerHTML = '<div><div style="font-family:var(--M);font-size:10px;letter-spacing:.12em;color:var(--gold);margin-bottom:4px;">BEFORE YOU GO</div><div style="font-family:var(--F);font-size:20px;color:var(--white);">15 MINUTES. YOUR SCORE. YOUR CONSTRAINT. A PLAN.</div></div><div style="display:flex;gap:12px;"><button onclick="document.getElementById(\'exit-intent-banner\').remove();exitIntentFired=false;" style="background:none;border:1px solid var(--brd);color:var(--muted);padding:10px 16px;font-family:var(--M);font-size:10px;cursor:pointer;">NOT NOW</button><a href="https://calendly.com/signalresolution/15min" target="_blank" style="background:var(--gold);color:#000;padding:10px 20px;font-family:var(--M);font-size:10px;letter-spacing:.08em;text-decoration:none;font-weight:600;">BOOK 15-MIN CALL →</a></div>';
+  document.body.appendChild(banner);
+}
+
+setTimeout(function() {
+  if (state.screen === 'system') checkExitIntent();
+}, 60000);
+
 // ═══════════════════════════════════════
 // LANDING — RENDER FRAMES
 // ═══════════════════════════════════════
@@ -530,8 +546,14 @@ async function handleNext() {
     });
     var d = data.data || data;
     state.result = d.result || d;
-    showScreen('results');
-    renderResultsGated();
+    var pathway = state.result.commercialPathwayId || '';
+    if (pathway === 'pathway_scale_operator') {
+      buildSystemPage();
+      showScreen('system');
+    } else {
+      showScreen('results');
+      renderResultsGated();
+    }
   } catch(err) {
     renderError('Scoring failed. Please try again.', handleNext);
   }
