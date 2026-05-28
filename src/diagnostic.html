@@ -622,15 +622,8 @@ function renderResultsGated() {
               + '</div>';
           }).join('')
         + '</div>'
-        + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent,var(--bg) 80%);">'
-        + '<div style="text-align:center;padding:20px;">'
-        + '<div class="kicker" style="margin-bottom:8px;">YOUR FULL REPORT IS READY</div>'
-        + '<p class="body-text" style="font-size:13px;margin-bottom:16px;">Category breakdown, detected patterns, and your personalised next move — all unlocked with your email.</p>'
-        + '<button class="btn-fire" onclick="showLeadCapture()">UNLOCK MY FULL REPORT →</button>'
-        + '</div></div></div>'
-        + '<div style="text-align:center;padding:20px 0;" class="fade-up">'
-        + '<button class="btn-line" onclick="showLeadCapture()">UNLOCK YOUR FULL REPORT →</button>'
-        + '</div>');
+        + '</div>'
+        + '<div style="text-align:center;margin-top:48px;padding:24px 0;"><div style="font-family:var(--M);font-size:9px;letter-spacing:.14em;color:var(--gold);margin-bottom:8px;">YOUR FULL REPORT IS READY</div><p style="font-family:var(--S);font-style:italic;font-size:15px;color:var(--slate);margin-bottom:24px;">Category breakdown, detected patterns, and your personalised next move — all unlocked with your email.</p><button onclick="showLeadCapture()" style="background:var(--gold);color:#000;padding:16px 32px;font-family:var(--M);font-size:11px;letter-spacing:.12em;font-weight:600;border:none;cursor:pointer;width:100%;">UNLOCK MY FULL REPORT →</button></div>');
 
   // Animate score count
   setTimeout(function() { animateCount('score-num', 0, pct, 1200); }, 300);
