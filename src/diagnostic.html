@@ -897,9 +897,9 @@ function buildSystemPage() {
 }
 
 function tierAction(action) {
-  if (action === 'checkout1') { alert('Tier 1 checkout — add URL when live.'); }
-  else if (action === 'apply2') { openModal('tier2'); }
-  else if (action === 'apply3') { openModal('tier3'); }
+  if (action === 'checkout1') { window.location.href = '/pricing.html'; }
+  else if (action === 'apply2') { window.location.href = '/apply.html'; }
+  else if (action === 'apply3') { window.location.href = '/pricing.html'; }
 }
 
 // ═══════════════════════════════════════
