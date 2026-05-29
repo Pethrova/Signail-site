@@ -20,6 +20,8 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.ignores.add("src/apply.html");
   eleventyConfig.addPassthroughCopy("src/pricing.html");
   eleventyConfig.ignores.add("src/pricing.html");
+  eleventyConfig.addPassthroughCopy("src/case-studies");
+  eleventyConfig.ignores.add("src/case-studies/skeptic-optimizer.html");
 
 
   // ── FILTERS ────────────────────────────────────────────────────────────────

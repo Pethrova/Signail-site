@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study: From System Fragmentation to 39% Response Rate — Signal Resolution</title>
+<meta name="description" content="How a Skeptic/Optimizer at $1.4M ARR resolved his primary GTM bottleneck in 90 days using the ICP Intelligence System.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080706;--sf:#0f0e0c;--sf2:#161410;--sf3:#1d1a15;
+  --brd:rgba(255,200,80,0.07);--brdH:rgba(255,200,80,0.18);
+  --gold:#f5a623;--goldH:#ffd166;--goldD:rgba(245,166,35,0.35);
+  --ember:#ff6b35;--slate:#c8c4bb;--muted:#6e6860;--dim:#3a3530;
+  --text:#ede8df;--white:#f7f3ec;
+  --F:'Bebas Neue',sans-serif;
+  --S:'Fraunces',serif;
+  --M:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--S);overflow-x:hidden;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-up{animation:fadeUp .5s ease both;}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:rgba(8,7,6,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);}
+.nav-logo{font-family:var(--F);font-size:18px;letter-spacing:.12em;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:10px;}
+.nav-logo .sigil svg{animation:spin 28s linear infinite;}
+.nav-right{font-family:var(--M);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+
+/* Layout */
+.section{padding:80px 24px;}
+.container{max-width:720px;margin:0 auto;}
+.divider{height:1px;background:var(--brd);}
+.gold-bar{height:3px;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+
+/* Typography */
+.kicker{font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.section-heading{font-family:var(--F);font-size:clamp(28px,4vw,42px);color:var(--white);letter-spacing:.04em;margin-bottom:28px;}
+.body-text{font-family:var(--S);font-style:italic;font-size:16px;color:var(--slate);line-height:1.8;}
+.mono{font-family:var(--M);font-size:10px;letter-spacing:.08em;}
+
+/* Profile card */
+.profile-card{background:var(--sf);border:1px solid var(--brd);border-left:3px solid var(--gold);padding:24px 28px;margin-top:32px;}
+.profile-row{display:flex;gap:16px;padding:10px 0;border-bottom:1px solid var(--brd);}
+.profile-row:last-child{border-bottom:none;}
+.profile-label{font-family:var(--M);font-size:9px;letter-spacing:.18em;color:var(--muted);flex-shrink:0;width:180px;}
+.profile-value{font-family:var(--M);font-size:10px;letter-spacing:.08em;color:var(--white);}
+
+/* Quote callout */
+.quote-callout{background:var(--sf2);border:1px solid var(--brd);border-left:3px solid var(--gold);padding:24px 28px;margin:28px 0;}
+.quote-callout p{font-family:var(--S);font-style:italic;font-size:17px;color:var(--white);line-height:1.7;margin-bottom:12px;}
+.quote-callout .attr{font-family:var(--M);font-size:9px;letter-spacing:.14em;color:var(--gold);}
+
+/* Full gold callout */
+.gold-callout{background:rgba(245,166,35,.05);border:1px solid var(--brdH);padding:36px 32px;margin:0;}
+.gold-callout p{font-family:var(--S);font-style:italic;font-size:20px;color:var(--white);line-height:1.65;margin-bottom:16px;}
+.gold-callout .attr{font-family:var(--M);font-size:9px;letter-spacing:.16em;color:var(--gold);}
+
+/* Numbered findings */
+.finding{display:flex;gap:20px;padding:28px 0;border-bottom:1px solid var(--brd);}
+.finding:last-child{border-bottom:none;}
+.finding-num{font-family:var(--F);font-size:40px;color:var(--goldD);line-height:1;flex-shrink:0;width:48px;}
+.finding-body .finding-label{font-family:var(--M);font-size:10px;letter-spacing:.14em;color:var(--gold);margin-bottom:10px;}
+.finding-body p{font-family:var(--S);font-style:italic;font-size:15px;color:var(--slate);line-height:1.7;}
+
+/* Week cards */
+.week-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:4px;}
+.week-card{background:var(--sf);border:1px solid var(--brd);overflow:hidden;}
+.week-card-bar{height:3px;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+.week-card-inner{padding:24px 20px;}
+.week-label{font-family:var(--F);font-size:22px;letter-spacing:.06em;color:var(--white);margin-bottom:12px;}
+.week-card p{font-family:var(--S);font-style:italic;font-size:13px;color:var(--slate);line-height:1.7;}
+
+/* Stat callouts */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:40px;}
+.stat-card{background:var(--sf);border:1px solid var(--brd);padding:28px 24px;text-align:center;}
+.stat-number{font-family:var(--F);font-size:clamp(48px,6vw,72px);color:var(--gold);line-height:.9;letter-spacing:.02em;margin-bottom:10px;}
+.stat-label{font-family:var(--M);font-size:9px;letter-spacing:.16em;color:var(--muted);line-height:1.5;}
+
+/* Buttons */
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;background:var(--gold);color:#000;font-family:var(--M);font-size:12px;font-weight:500;letter-spacing:.1em;padding:16px 36px;border:none;text-decoration:none;transition:all .25s;}
+.btn-gold:hover{box-shadow:0 0 40px rgba(245,166,35,.35);transform:translateY(-2px);}
+.btn-outline{display:inline-flex;align-items:center;justify-content:center;background:transparent;color:var(--gold);font-family:var(--M);font-size:12px;font-weight:500;letter-spacing:.1em;padding:15px 36px;border:1px solid rgba(245,166,35,.35);text-decoration:none;transition:all .25s;}
+.btn-outline:hover{border-color:var(--gold);background:rgba(245,166,35,.06);transform:translateY(-2px);}
+
+/* Ambient */
+.orb-a{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07),transparent 70%);top:-80px;right:-100px;filter:blur(40px);pointer-events:none;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.025) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,black,transparent);pointer-events:none;}
+
+@media(max-width:768px){
+  .nav{padding:16px 20px;}
+  .week-grid{grid-template-columns:1fr;}
+  .stat-grid{grid-template-columns:1fr;}
+  .profile-label{width:140px;}
+}
+@media(max-width:640px){
+  .section{padding:60px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <span class="sigil"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#f5a623" stroke-width="1"/><circle cx="11" cy="11" r="6" stroke="#f5a623" stroke-width=".5" stroke-dasharray="2 2"/><circle cx="11" cy="11" r="2" fill="#f5a623"/></svg></span>
+    SIGNAL RESOLUTION
+  </a>
+  <span class="nav-right">CASE STUDY</span>
+</nav>
+
+<!-- ═══════════════════════════════════
+     SECTION 1 — HEADER
+═══════════════════════════════════ -->
+<section style="position:relative;overflow:hidden;padding:140px 24px 80px;">
+  <div class="orb-a"></div>
+  <div class="grid-bg"></div>
+  <div class="container" style="position:relative;z-index:2;">
+
+    <div class="kicker fade-up">CLIENT CASE STUDY — ANONYMIZED</div>
+    <h1 class="fade-up" style="font-family:var(--F);font-size:clamp(40px,6.5vw,80px);color:var(--white);line-height:.92;letter-spacing:.02em;margin-bottom:20px;animation-delay:.08s;">
+      FROM SYSTEM FRAGMENTATION<br>TO 39% RESPONSE RATE
+    </h1>
+    <p class="fade-up" style="font-family:var(--S);font-style:italic;font-size:clamp(16px,1.8vw,20px);color:var(--slate);line-height:1.6;max-width:560px;animation-delay:.16s;">
+      How a Skeptic/Optimizer at $1.4M ARR resolved his primary GTM bottleneck in 90 days.
+    </p>
+
+    <div class="profile-card fade-up" style="animation-delay:.24s;">
+      <div class="profile-row">
+        <span class="profile-label">ARCHETYPE</span>
+        <span class="profile-value">Skeptic/Optimizer</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">ARR AT INTAKE</span>
+        <span class="profile-value">$1.4M</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">PRIMARY BOTTLENECK</span>
+        <span class="profile-value">System Fragmentation</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">READINESS STAGE</span>
+        <span class="profile-value">Operator Stage</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 2 — THE SITUATION
+═══════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-heading">THE SITUATION</div>
+
+    <p class="body-text" style="margin-bottom:20px;">
+      D.P. had been optimizing his GTM stack for eighteen months. Three enrichment tools. Two sequencing platforms. One intent data subscription. His CRM had more data than any founder at his stage should reasonably have. None of it was working together.
+    </p>
+    <p class="body-text" style="margin-bottom:20px;">
+      His response rates had been flat at 8% for two quarters. He had tested new subject lines, new offers, new personas. Each change produced a small lift that disappeared within three weeks. His team was running outreach that was technically correct — right industry, right title, right company size — and reaching buyers who were not ready to hear it.
+    </p>
+    <p class="body-text" style="margin-bottom:28px;">
+      When D.P. completed the diagnostic, he scored 61 out of 100. Operator Stage. His lowest category was System Design, followed closely by Signal Capture. His ICP document described his buyer accurately. It could not tell him when that buyer was in a state to act.
+    </p>
+
+    <div class="quote-callout">
+      <p>"I had already bought the tools. I had already written the playbooks. The problem was that none of them were calibrated to buyer state. They were calibrated to buyer description. That is a different thing."</p>
+      <div class="attr">— D.P., CO-FOUNDER · $1.4M ARR · SKEPTIC/OPTIMIZER</div>
+    </div>
+
+    <p class="body-text">
+      He was skeptical going in. He said that directly on the intake call. He had seen frameworks before. He had read the books. His operating assumption was that the problem was execution, not architecture. The diagnostic disagreed.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 3 — WHAT THE DIAGNOSTIC FOUND
+═══════════════════════════════════ -->
+<section class="section" style="background:var(--sf);">
+  <div class="container">
+    <div class="section-heading">WHAT THE DIAGNOSTIC FOUND</div>
+
+    <div class="finding">
+      <div class="finding-num">01</div>
+      <div class="finding-body">
+        <div class="finding-label">FRAGMENTED SIGNAL ARCHITECTURE</div>
+        <p>Each tool in D.P.'s stack was generating signals independently. None were being classified by buyer state, decision-stage relevance, or readiness score. The result was a data volume problem that looked like a targeting problem. His team was not missing signals. They were missing a system that made signals actionable.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-num">02</div>
+      <div class="finding-body">
+        <div class="finding-label">ACCURATE BUT INERT ICP DEFINITION</div>
+        <p>D.P.'s ICP document was technically precise. It described who the buyer was by role, company size, and industry with accuracy. What it could not do was predict when that buyer would be receptive. The ICP described a segment. It did not describe a state. Outreach was firing at description, not at moment.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-num">03</div>
+      <div class="finding-body">
+        <div class="finding-label">OUTREACH TRIGGERING ON FIT, NOT READINESS</div>
+        <p>Every sequence in D.P.'s stack was triggered by firmographic thresholds — headcount, funding round, tech stack. None were calibrated to behavioral or contextual buyer state signals. Fit-based triggers reach buyers who qualify. State-based triggers reach buyers who are ready. D.P.'s stack had only the former.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 4 — THE INTERVENTION
+═══════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-heading">THE INTERVENTION</div>
+    <div class="week-grid">
+
+      <div class="week-card">
+        <div class="week-card-bar"></div>
+        <div class="week-card-inner">
+          <div class="week-label">WEEK 1</div>
+          <p>Diagnostic result mapped to a unified signal architecture. The six-database Notion workspace was deployed with D.P.'s existing tool outputs routed into the Signal Collection Layer. Each incoming signal was tagged by emotion category, pain theme, buyer state, and confidence level. First time any of his data sources were speaking the same classification language.</p>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-card-bar"></div>
+        <div class="week-card-inner">
+          <div class="week-label">WEEK 2</div>
+          <p>The 88-source signal pipeline ran against D.P.'s exact market for the first time. Twenty-two classified signals imported in the first cycle. The Language Mirror populated with verbatim buyer language pulled from Reddit, LinkedIn, G2, and Hacker News — language his buyers were using organically, not language his team had assumed they used. The gap between the two was significant.</p>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-card-bar"></div>
+        <div class="week-card-inner">
+          <div class="week-label">WEEK 3</div>
+          <p>Outreach sequences rewritten using mined language from the Language Mirror. Trigger logic rebuilt around buyer state signals rather than firmographic thresholds. The same target accounts remained. The entry point changed from "you fit our ICP" to "we saw that you are dealing with this specific problem right now." The first send went out on day 19.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 5 — THE RESULT
+═══════════════════════════════════ -->
+<section class="section" style="background:var(--sf);">
+  <div class="container">
+    <div class="section-heading">THE RESULT</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-number">39%</div>
+        <div class="stat-label">RESPONSE RATE<br>(VS 8% BASELINE)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">11/28</div>
+        <div class="stat-label">ACCOUNTS RESPONDED<br>FIRST TOUCH</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">90</div>
+        <div class="stat-label">DAYS TO<br>PIPELINE RESOLUTION</div>
+      </div>
+    </div>
+
+    <div class="gold-callout">
+      <div class="gold-bar" style="margin:-36px -32px 32px;width:calc(100% + 64px);"></div>
+      <p>"The framework did not change our outreach. It changed what we were reaching out about. That is a different problem than I thought I had."</p>
+      <div class="attr">— D.P., CO-FOUNDER · $1.4M ARR · SKEPTIC/OPTIMIZER · TIER 2 CLIENT</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 6 — CTA
+═══════════════════════════════════ -->
+<section class="section">
+  <div class="container" style="text-align:center;">
+    <div class="kicker" style="margin-bottom:24px;">THE NEXT STEP IS YOURS</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+      <a href="/apply.html" class="btn-gold">APPLY FOR TIER 2 →</a>
+      <a href="/diagnostic.html" class="btn-outline">TAKE THE DIAGNOSTIC FIRST →</a>
+    </div>
+    <p style="font-family:var(--M);font-size:9px;letter-spacing:.14em;color:var(--dim);">
+      12 CLIENT CAP. ROME REVIEWS EVERY APPLICATION WITHIN 48 HOURS.
+    </p>
+  </div>
+</section>
+
+</body>
+</html>
