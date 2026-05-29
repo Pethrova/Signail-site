@@ -46,5 +46,5 @@ Never commit node_modules.
 - Tripwire checkout URLs in diagnostic.html are placeholders (console.log only) — need real URLs when checkout is live
 - OG images not set on posts
 - No favicon
-- No RSS feed or sitemap.xml
+- RSS feed at /feed.xml and sitemap at /sitemap.xml — live
 - Tier 1 checkout URL in diagnostic.html is an alert placeholder
