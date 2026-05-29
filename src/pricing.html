@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Signal Resolution</title>
+<meta name="description" content="Three tiers. One system. Built for where you are right now. ICP Intelligence System pricing for seed-stage B2B SaaS founders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080706;--sf:#0f0e0c;--sf2:#161410;--sf3:#1d1a15;
+  --brd:rgba(255,200,80,0.07);--brdH:rgba(255,200,80,0.18);
+  --gold:#f5a623;--goldH:#ffd166;--goldD:rgba(245,166,35,0.35);
+  --ember:#ff6b35;--slate:#c8c4bb;--muted:#6e6860;--dim:#3a3530;
+  --text:#ede8df;--white:#f7f3ec;
+  --F:'Bebas Neue',sans-serif;
+  --S:'Fraunces',serif;
+  --M:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--S);overflow-x:hidden;min-height:100vh;}
+a{color:inherit;cursor:pointer;}
+button{font-family:inherit;cursor:pointer;}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-up{animation:fadeUp .5s ease both;}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:rgba(8,7,6,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);}
+.nav-logo{font-family:var(--F);font-size:18px;letter-spacing:.12em;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:10px;}
+.nav-logo .sigil{display:flex;align-items:center;}
+.nav-logo .sigil svg{animation:spin 28s linear infinite;}
+.nav-right{font-family:var(--M);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+
+/* Shared */
+.gold-bar{height:3px;width:100%;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+.kicker{font-family:var(--M);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.section{padding:80px 24px;}
+.container{max-width:1080px;margin:0 auto;}
+.divider{height:1px;background:var(--brd);}
+
+/* Buttons */
+.btn-gold{display:inline-flex;align-items:center;justify-content:center;width:100%;background:var(--gold);color:#000;font-family:var(--M);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:15px 24px;border:none;text-decoration:none;transition:all .25s;}
+.btn-gold:hover{box-shadow:0 0 40px rgba(245,166,35,.35);transform:translateY(-2px);}
+.btn-outline{display:inline-flex;align-items:center;justify-content:center;width:100%;background:transparent;color:var(--gold);font-family:var(--M);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:14px 24px;border:1px solid rgba(245,166,35,.35);text-decoration:none;transition:all .25s;}
+.btn-outline:hover{border-color:var(--gold);background:rgba(245,166,35,.06);transform:translateY(-2px);}
+
+/* Tier cards */
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;align-items:start;}
+.tier-card{background:var(--sf);border:1px solid var(--brd);padding:0;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.tier-card.featured{border-color:var(--brdH);background:var(--sf2);}
+.tier-card-bar{height:3px;width:100%;background:linear-gradient(90deg,var(--gold),var(--ember),transparent);}
+.tier-card-inner{padding:32px 28px;flex:1;display:flex;flex-direction:column;}
+.tier-badge{position:absolute;top:20px;right:20px;font-family:var(--M);font-size:8px;letter-spacing:.15em;color:#000;background:var(--gold);padding:4px 10px;}
+.price-block{margin:24px 0 20px;}
+.price-amount{font-family:var(--F);font-size:64px;color:var(--gold);line-height:.9;letter-spacing:.02em;}
+.price-period{font-family:var(--M);font-size:10px;color:var(--muted);letter-spacing:.12em;margin-top:6px;}
+.price-label{font-family:var(--M);font-size:9px;color:var(--dim);letter-spacing:.15em;margin-top:4px;text-transform:uppercase;}
+.feature-list{list-style:none;margin:0 0 28px;padding:0;flex:1;}
+.feature-list li{display:flex;align-items:flex-start;gap:10px;font-family:var(--M);font-size:10px;color:var(--slate);letter-spacing:.05em;padding:8px 0;border-bottom:1px solid var(--brd);}
+.feature-list li:last-child{border-bottom:none;}
+.feature-list li span.check{color:var(--gold);flex-shrink:0;}
+.guarantee{font-family:var(--M);font-size:8px;color:var(--dim);letter-spacing:.1em;text-align:center;margin-top:16px;line-height:1.6;}
+
+/* FAQ */
+.faq-item{padding:28px 0;border-bottom:1px solid var(--brd);}
+.faq-item:last-child{border-bottom:none;}
+.faq-q{font-family:var(--M);font-size:11px;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;}
+.faq-a{font-family:var(--S);font-style:italic;font-size:16px;color:var(--slate);line-height:1.7;}
+
+/* Ambient */
+.orb-a{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07),transparent 70%);top:-100px;right:-150px;filter:blur(40px);pointer-events:none;}
+.orb-b{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.05),transparent 70%);bottom:-80px;left:-80px;filter:blur(60px);pointer-events:none;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.025) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,black,transparent);pointer-events:none;}
+
+@media(max-width:768px){
+  .nav{padding:16px 20px;}
+  .tier-grid{grid-template-columns:1fr;}
+  .tier-card.featured{order:-1;}
+}
+@media(max-width:640px){
+  .section{padding:60px 16px;}
+  .price-amount{font-size:52px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <span class="sigil"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#f5a623" stroke-width="1"/><circle cx="11" cy="11" r="6" stroke="#f5a623" stroke-width=".5" stroke-dasharray="2 2"/><circle cx="11" cy="11" r="2" fill="#f5a623"/></svg></span>
+    SIGNAL RESOLUTION
+  </a>
+  <span class="nav-right">DIAGNOSTIC ENGINE</span>
+</nav>
+
+<!-- ═══════════════════════════════════
+     SECTION 1 — HEADER
+═══════════════════════════════════ -->
+<section style="position:relative;overflow:hidden;padding:140px 24px 80px;text-align:center;">
+  <div class="orb-a"></div>
+  <div class="orb-b"></div>
+  <div class="grid-bg"></div>
+  <div style="position:relative;z-index:2;max-width:720px;margin:0 auto;">
+    <div class="kicker fade-up" style="margin-bottom:20px;">TRANSPARENT PRICING</div>
+    <h1 class="fade-up" style="font-family:var(--F);font-size:clamp(48px,7vw,96px);color:var(--white);line-height:.92;letter-spacing:.02em;margin-bottom:24px;animation-delay:.08s;">
+      THE ICP INTELLIGENCE SYSTEM
+    </h1>
+    <p class="fade-up" style="font-family:var(--S);font-style:italic;font-size:clamp(16px,1.8vw,20px);color:var(--slate);line-height:1.6;max-width:480px;margin:0 auto;animation-delay:.16s;">
+      Three tiers. One system. Built for where you are right now.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 2 — TIER GRID
+═══════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="tier-grid">
+
+      <!-- TIER 1 -->
+      <div class="tier-card">
+        <div class="tier-card-bar"></div>
+        <div class="tier-card-inner">
+          <div class="kicker" style="margin-bottom:4px;">TIER 1 — SELF-DIRECTED</div>
+          <div class="price-block">
+            <div class="price-amount">$497</div>
+            <div class="price-period">/MONTH</div>
+            <div class="price-label">UNLIMITED DIAGNOSTIC RUNS</div>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span>Full diagnostic engine access</li>
+            <li><span class="check">✓</span>6-database Notion intelligence workspace</li>
+            <li><span class="check">✓</span>Weekly signal pipeline (88 sources)</li>
+            <li><span class="check">✓</span>ICP Clarity Foundation framework</li>
+            <li><span class="check">✓</span>Unlimited team diagnostic runs</li>
+            <li><span class="check">✓</span>30-day signal guarantee</li>
+          </ul>
+          <a href="https://signalresolution.lemonsqueezy.com/checkout/buy/c5437578-c42b-4831-aad0-2f1ca1d7985d" class="btn-gold">START THE SYSTEM →</a>
+          <p class="guarantee">30-DAY SIGNAL GUARANTEE — YOUR WORKSPACE RECEIVES 15 SIGNALS IN 30 DAYS OR WE REFUND.</p>
+        </div>
+      </div>
+
+      <!-- TIER 2 — FEATURED -->
+      <div class="tier-card featured">
+        <div class="tier-card-bar"></div>
+        <div class="tier-badge">MOST SELECTED</div>
+        <div class="tier-card-inner">
+          <div class="kicker" style="margin-bottom:4px;">TIER 2 — DONE WITH YOU</div>
+          <div class="price-block">
+            <div class="price-amount">$2,997</div>
+            <div class="price-period">/MONTH</div>
+            <div class="price-label">CAP OF 12 CLIENTS</div>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span>Everything in Tier 1</li>
+            <li><span class="check">✓</span>3 buyer avatar profiles built from your diagnostic</li>
+            <li><span class="check">✓</span>50-signal Notion workspace pre-populated day one</li>
+            <li><span class="check">✓</span>Weekly DWY signal review with Rome</li>
+            <li><span class="check">✓</span>Priority support and iteration cycles</li>
+            <li><span class="check">✓</span>90-day signal guarantee</li>
+          </ul>
+          <a href="/apply.html" class="btn-gold">APPLY FOR TIER 2 →</a>
+          <p class="guarantee">90-DAY SIGNAL GUARANTEE — 50 SIGNALS IN 90 DAYS OR ENGAGEMENT EXTENDED AT NO CHARGE.</p>
+        </div>
+      </div>
+
+      <!-- TIER 3 -->
+      <div class="tier-card">
+        <div class="tier-card-bar"></div>
+        <div class="tier-card-inner">
+          <div class="kicker" style="margin-bottom:4px;">TIER 3 — DONE FOR YOU</div>
+          <div class="price-block">
+            <div class="price-amount">$5,997</div>
+            <div class="price-period">/MONTH</div>
+            <div class="price-label">CAP OF 8 CLIENTS</div>
+          </div>
+          <ul class="feature-list">
+            <li><span class="check">✓</span>Everything in Tier 2</li>
+            <li><span class="check">✓</span>Full signal layer build — Rome does it for you</li>
+            <li><span class="check">✓</span>Custom ICP resolution system architecture</li>
+            <li><span class="check">✓</span>Monthly strategy session included</li>
+            <li><span class="check">✓</span>Priority onboarding within 7 days</li>
+            <li><span class="check">✓</span>120-day signal guarantee</li>
+          </ul>
+          <a href="mailto:rome@signalresolution.com?subject=Tier 3 Enquiry" class="btn-outline">ENQUIRE ABOUT TIER 3 →</a>
+          <p class="guarantee">120-DAY GUARANTEE — FULL REFUND IF SIGNAL LAYER NOT OPERATIONAL WITHIN 120 DAYS.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 3 — FAQ
+═══════════════════════════════════ -->
+<section class="section" style="background:var(--sf);">
+  <div style="max-width:680px;margin:0 auto;">
+    <div class="kicker" style="margin-bottom:40px;">FREQUENTLY ASKED</div>
+
+    <div class="faq-item">
+      <div class="faq-q">Do I need to complete the diagnostic first?</div>
+      <p class="faq-a">Yes. The diagnostic is the entry point for all three tiers. It pre-populates your Notion workspace and tells us which tier is the right fit before you commit.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What is the Notion intelligence workspace?</div>
+      <p class="faq-a">A six-database system that organizes your buyer signal data. Dream buyer avatars, signal collection, language mirror, why stack, signal validation, and messaging builder. Pre-filled from your diagnostic result on day one.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Can I upgrade between tiers?</div>
+      <p class="faq-a">Yes. Most clients start at T1 and move to T2 when they want the DWY layer. Upgrades are prorated and transitions happen within 7 days.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What happens if I do not hit the signal guarantee?</div>
+      <p class="faq-a">T1: full refund, no questions. T2: engagement extended at no additional charge until the milestone is hit. T3: full refund if the signal layer is not operational within 120 days.</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════
+     SECTION 4 — DIAGNOSTIC CTA
+═══════════════════════════════════ -->
+<section class="section">
+  <div style="max-width:600px;margin:0 auto;">
+    <div style="background:var(--sf2);border:1px solid var(--brdH);padding:48px 40px;text-align:center;position:relative;overflow:hidden;">
+      <div class="gold-bar" style="position:absolute;top:0;left:0;right:0;margin:0;width:100%;"></div>
+      <div style="font-family:var(--F);font-size:clamp(24px,3.5vw,40px);color:var(--white);letter-spacing:.04em;margin-top:8px;margin-bottom:16px;">
+        NOT SURE WHICH TIER IS RIGHT?
+      </div>
+      <p style="font-family:var(--S);font-style:italic;font-size:16px;color:var(--slate);line-height:1.7;margin-bottom:32px;max-width:440px;margin-left:auto;margin-right:auto;">
+        Take the diagnostic. It scores your GTM signal layer across nine categories and routes you to the correct starting point.
+      </p>
+      <a href="/diagnostic.html" style="display:inline-flex;align-items:center;justify-content:center;background:var(--gold);color:#000;font-family:var(--M);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:16px 40px;text-decoration:none;transition:all .25s;" onmouseover="this.style.boxShadow='0 0 40px rgba(245,166,35,.4)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
+        TAKE THE DIAGNOSTIC →
+      </a>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
